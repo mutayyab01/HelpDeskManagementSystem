@@ -1,4 +1,4 @@
-﻿@model HelpDeskSystem.Models.Ticket
+﻿@model HelpDeskSystem.Models.Comment
 
 @{
     ViewData["Title"] = "Create";
@@ -6,7 +6,7 @@
 
 <h1>Create</h1>
 
-<h4>Ticket</h4>
+<h4>Comment</h4>
 <hr />
 <div class="row">
     <div class="col-md-12">
@@ -15,43 +15,31 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="Title" class="control-label"></label>
-                        <input asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
                         <label asp-for="Description" class="control-label"></label>
                         <input asp-for="Description" class="form-control" />
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
+
                     <div class="form-group">
-                        <label asp-for="Status" class="control-label"></label>
-                        <input asp-for="Status" class="form-control" />
-                        <span asp-validation-for="Status" class="text-danger"></span>
+                        <label asp-for="TicketId" class="control-label"></label>
+                        <select asp-for="TicketId" class="form-control" asp-items="ViewBag.TicketId"></select>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Priority" class="control-label"></label>
-                        <input asp-for="Priority" class="form-control" />
-                        <span asp-validation-for="Priority" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="CreatedById" class="control-label"></label>
-                        <select asp-for="CreatedById" class="form-control" asp-items="ViewBag.CreatedById"></select>
-                    </div>
-                </div>
-                <div class="col-md-6">
+
                     <div class="form-group">
                         <label asp-for="CreatedOn" class="control-label"></label>
                         <input asp-for="CreatedOn" class="form-control" />
                         <span asp-validation-for="CreatedOn" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label asp-for="CreatedById" class="control-label"></label>
+                        <select asp-for="CreatedById" class="form-control" asp-items="ViewBag.CreatedById"></select>
                     </div>
                 </div>
             </div>

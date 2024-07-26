@@ -13,6 +13,7 @@ namespace HelpDeskSystem.Data
 
         }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -21,6 +22,18 @@ namespace HelpDeskSystem.Data
                 .WithMany()
                 .HasForeignKey(c => c.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.CreatedBy)
+                .WithMany()
+                .HasForeignKey(c => c.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Comment>()
+             .HasOne(c => c.Ticket)
+             .WithMany()
+             .HasForeignKey(c => c.TicketId)
+             .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

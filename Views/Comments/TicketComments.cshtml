@@ -1,39 +1,29 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.Ticket>
+﻿@model IEnumerable<HelpDeskSystem.Models.Comment>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Tickets List</h1>
+<h1>Tickets Comments</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add New Ticket</a>
+    <a asp-action="Create" class="btn btn-primary">Add New Comments</a>
 </p>
 <table class="table table-bordered table-striped table-responsive table-hover">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Priority)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
+                @Html.DisplayNameFor(model => model.Ticket)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedOn)
             </th>
-            <th>Comments</th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
             <th>View</th>
             <th>Edit</th>
             <th>Delete</th>
@@ -44,28 +34,16 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Priority)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy.FullName)
+                    @Html.DisplayFor(modelItem => item.Ticket.Title)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreatedOn)
                 </td>
                 <td>
-                    <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>
+                    @Html.DisplayFor(modelItem => item.CreatedBy.FullName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
