@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
+using System.Security.Claims;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -22,11 +23,11 @@ namespace HelpDeskSystem.Controllers
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            var tickets =await _context.Tickets
+            var tickets = await _context.Tickets
                 .Include(t => t.CreatedBy)
-                .OrderBy(x=>x.CreatedOn)
+                .OrderBy(x => x.CreatedOn)
                 .ToListAsync();
-               
+
 
 
             return View(tickets);
@@ -64,13 +65,15 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Ticket ticket)
+        public async Task<IActionResult> Create(Ticket ticket)
         {
-            
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ticket.CreatedOn = DateTime.Now;
+            ticket.CreatedById = UserId;
+            _context.Add(ticket);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", ticket.CreatedById);
             return View(ticket);
         }
@@ -104,25 +107,25 @@ namespace HelpDeskSystem.Controllers
                 return NotFound();
             }
 
-            
-                try
+
+            try
+            {
+                _context.Update(ticket);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TicketExists(ticket.Id))
                 {
-                    _context.Update(ticket);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!TicketExists(ticket.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
-            
+            }
+            return RedirectToAction(nameof(Index));
+
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", ticket.CreatedById);
             return View(ticket);
         }
