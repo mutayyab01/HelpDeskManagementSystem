@@ -1,4 +1,5 @@
 ﻿using HelpDeskSystem.Data;
+using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -65,6 +66,19 @@ namespace HelpDeskSystem.Controllers
                 var result = await _userManager.CreateAsync(Registereduser, user.PasswordHash);
                 if (result.Succeeded)
                 {
+                    //log The Audit Trails
+                    var activity = new AuditTrail()
+                    {
+                        Action = "Create",
+                        TimeStamp = DateTime.Now,
+                        IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                        UserId = UserId,
+                        Module = "Users",
+                        AffectedTable = "Users",
+                    };
+
+                    _context.Add(activity);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
 
                 }
