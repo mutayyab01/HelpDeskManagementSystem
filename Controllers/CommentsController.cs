@@ -90,6 +90,8 @@ namespace HelpDeskSystem.Controllers
 
             _context.Add(activity);
             await _context.SaveChangesAsync();
+            TempData["MESSEGE"] = "Ticket Comment Created Successfully";
+
             return RedirectToAction(nameof(Index));
 
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", comment.CreatedById);
@@ -132,6 +134,8 @@ namespace HelpDeskSystem.Controllers
             {
                 _context.Update(comment);
                 await _context.SaveChangesAsync();
+                TempData["MESSEGE"] = "Ticket Comment Updated Successfully";
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -183,7 +187,9 @@ namespace HelpDeskSystem.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["MESSEGE"] = "Ticket Comment Deleted Successfully";
             return RedirectToAction(nameof(Index));
+
         }
 
         private bool CommentExists(int id)

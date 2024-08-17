@@ -11,29 +11,23 @@ using System.Security.Claims;
 
 namespace HelpDeskSystem.Controllers
 {
-    public class TicketsController : Controller
+    public class TicketCategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TicketsController(ApplicationDbContext context)
+        public TicketCategoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Tickets
+        // GET: TicketCategories
         public async Task<IActionResult> Index()
         {
-            var tickets = await _context.Tickets
-                .Include(t => t.CreatedBy)
-                .OrderBy(x => x.CreatedOn)
-                .ToListAsync();
-
-
-
-            return View(tickets);
+            var applicationDbContext = _context.TicketCategories.Include(t => t.CreatedBy).Include(t => t.ModifiedBy);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Tickets/Details/5
+        // GET: TicketCategories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -41,57 +35,46 @@ namespace HelpDeskSystem.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
+            var ticketCategory = await _context.TicketCategories
                 .Include(t => t.CreatedBy)
+                .Include(t => t.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            if (ticketCategory == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(ticketCategory);
         }
 
-        // GET: Tickets/Create
+        // GET: TicketCategories/Create
         public IActionResult Create()
         {
-
-            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            //ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id");
+            //ViewData["ModifiedById"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Tickets/Create
+        // POST: TicketCategories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket)
+        public async Task<IActionResult> Create(TicketCategory ticketCategory)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ticket.CreatedOn = DateTime.Now;
-            ticket.CreatedById = UserId;
-            _context.Add(ticket);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ticketCategory.CreatedOn = DateTime.Now;
+            ticketCategory.CreatedById = userId;
+            _context.Add(ticketCategory);
             await _context.SaveChangesAsync();
+            TempData["MESSEGE"] = "Ticket Category Created Successfully";
 
-            //log The Audit Trails
-            var activity = new AuditTrail() {
-                Action = "Create",
-                TimeStamp = DateTime.Now,
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                UserId=UserId,
-                Module="Tickets",
-                AffectedTable="Tickets",
-            };
-
-            _context.Add(activity);
-            await _context.SaveChangesAsync();
-            TempData["MESSEGE"] = "Ticket Created Successfully";
             return RedirectToAction(nameof(Index));
-            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", ticket.CreatedById);
-            return View(ticket);
+
+            return View(ticketCategory);
         }
 
-        // GET: Tickets/Edit/5
+        // GET: TicketCategories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -99,23 +82,23 @@ namespace HelpDeskSystem.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket == null)
+            var ticketCategory = await _context.TicketCategories.FindAsync(id);
+            if (ticketCategory == null)
             {
                 return NotFound();
             }
-            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", ticket.CreatedById);
-            return View(ticket);
+
+            return View(ticketCategory);
         }
 
-        // POST: Tickets/Edit/5
+        // POST: TicketCategories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Ticket ticket)
+        public async Task<IActionResult> Edit(int id, TicketCategory ticketCategory)
         {
-            if (id != ticket.Id)
+            if (id != ticketCategory.Id)
             {
                 return NotFound();
             }
@@ -123,14 +106,17 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
-                _context.Update(ticket);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                ticketCategory.ModifiedOn = DateTime.Now;
+                ticketCategory.ModifiedById = userId;
+                _context.Update(ticketCategory);
                 await _context.SaveChangesAsync();
-                TempData["MESSEGE"] = "Ticket Updated Successfully";
+                TempData["MESSEGE"] = "Ticket Category Updated Successfully";
 
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TicketExists(ticket.Id))
+                if (!TicketCategoryExists(ticketCategory.Id))
                 {
                     return NotFound();
                 }
@@ -140,12 +126,10 @@ namespace HelpDeskSystem.Controllers
                 }
             }
             return RedirectToAction(nameof(Index));
-
-            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", ticket.CreatedById);
-            return View(ticket);
+            return View(ticketCategory);
         }
 
-        // GET: Tickets/Delete/5
+        // GET: TicketCategories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -153,37 +137,38 @@ namespace HelpDeskSystem.Controllers
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
+            var ticketCategory = await _context.TicketCategories
                 .Include(t => t.CreatedBy)
+                .Include(t => t.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            if (ticketCategory == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(ticketCategory);
         }
 
-        // POST: Tickets/Delete/5
+        // POST: TicketCategories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
+            var ticketCategory = await _context.TicketCategories.FindAsync(id);
+            if (ticketCategory != null)
             {
-                _context.Tickets.Remove(ticket);
-                TempData["MESSEGE"] = "Ticket Deleted Successfully";
-
+                _context.TicketCategories.Remove(ticketCategory);
             }
 
             await _context.SaveChangesAsync();
+            TempData["MESSEGE"] = "Ticket Category Deleted Successfully";
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TicketExists(int id)
+        private bool TicketCategoryExists(int id)
         {
-            return _context.Tickets.Any(e => e.Id == id);
+            return _context.TicketCategories.Any(e => e.Id == id);
         }
     }
 }
