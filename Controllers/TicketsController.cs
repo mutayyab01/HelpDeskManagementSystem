@@ -31,10 +31,11 @@ namespace HelpDeskSystem.Controllers
         public async Task<IActionResult> Index(TicketViewModel VM)
         {
             VM.Tickets = await _context.Tickets
-                .Include(t => t.CreatedBy)    
+                .Include(t => t.CreatedBy)
                 .Include(t => t.SubCategory)
                 .Include(t => t.Priority)
                 .Include(t => t.Status)
+                .Include(t => t.TicketComments)
                 .OrderBy(x => x.CreatedOn)
                 .ToListAsync();
 
@@ -61,7 +62,7 @@ namespace HelpDeskSystem.Controllers
             VM.TicketComments = await _context.Comments
                 .Include(x => x.CreatedBy)
                 .Include(x => x.Ticket)
-                .Where(x=>x.TicketId==id)
+                .Where(x => x.TicketId == id)
                 .ToListAsync();
 
             if (VM.TicketDetails == null)
@@ -86,7 +87,7 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TicketViewModel ticketVM,IFormFile accachmentFile)
+        public async Task<IActionResult> Create(TicketViewModel ticketVM, IFormFile accachmentFile)
         {
             ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description", ticketVM.PriorityId);
             ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
@@ -95,7 +96,7 @@ namespace HelpDeskSystem.Controllers
             {
                 var ext = Path.GetExtension(accachmentFile.FileName);
                 var size = accachmentFile.Length;
-                if (ext == ".png" || ext == ".jpeg" || ext == ".jpg"|| ext == ".pdf"|| ext == ".docx")
+                if (ext == ".png" || ext == ".jpeg" || ext == ".jpg" || ext == ".pdf" || ext == ".docx")
                 {
                     if (size <= 1000000)//1Mb
                     {
@@ -156,10 +157,40 @@ namespace HelpDeskSystem.Controllers
             _context.Add(activity);
             await _context.SaveChangesAsync();
             TempData["MESSEGE"] = "Ticket Created Successfully";
-           
+
             return RedirectToAction(nameof(Index));
             return View(ticket);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int id, TicketViewModel VM)
+        {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Comment comment = new();
+            comment.TicketId = id;
+            comment.CreatedOn = DateTime.Now;
+            comment.CreatedById = UserId;
+            comment.Description = VM.CommentsDescription;
+            _context.Add(comment);
+            await _context.SaveChangesAsync();
+            //log The Audit Trails
+            var activity = new AuditTrail()
+            {
+                Action = "Create",
+                TimeStamp = DateTime.Now,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                UserId = UserId,
+                Module = "Comments",
+                AffectedTable = "Comments",
+            };
+
+            _context.Add(activity);
+            await _context.SaveChangesAsync();
+            TempData["MESSEGE"] = "Ticket Comment Created Successfully";
+
+            return RedirectToAction(nameof(Details), new {id=id});
+        }
+
 
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)

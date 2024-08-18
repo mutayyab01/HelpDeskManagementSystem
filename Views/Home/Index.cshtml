@@ -101,10 +101,10 @@
                         <th>
                             @Html.DisplayNameFor(model => model.CreatedOn)
                         </th>
+                        <th>No Of Comments</th>
                         <th>Comments</th>
                         <th>View</th>
                         <th>Edit</th>
-                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -132,6 +132,9 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.CreatedOn)
                             </td>
+                            <td class="text-center">
+                                <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id">    @item.TicketComments.Count()</a>
+                            </td>
                             <td>
                                 <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>
                             </td>
@@ -140,9 +143,6 @@
                             </td>
                             <td>
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a>
-                            </td>
-                            <td>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
                             </td>
                         </tr>
                     }

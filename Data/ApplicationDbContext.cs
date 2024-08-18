@@ -49,7 +49,7 @@ namespace HelpDeskSystem.Data
 
             builder.Entity<Comment>()
              .HasOne(c => c.Ticket)
-             .WithMany()
+             .WithMany(c=>c.TicketComments)
              .HasForeignKey(c => c.TicketId)
              .OnDelete(DeleteBehavior.Restrict);
 

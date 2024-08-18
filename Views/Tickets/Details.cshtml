@@ -82,7 +82,7 @@
             <div class="col-md-6">
                 <h4>Tickets Comments</h4>
                 <table class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
-                    <thead >
+                    <thead>
                         <tr>
                             <th>
                                 @Html.DisplayNameFor(model => model.TicketComment.Id)
@@ -99,7 +99,7 @@
                             <th>
                                 @Html.DisplayNameFor(model => model.TicketComment.CreatedOn)
                             </th>
-                          
+
                         </tr>
                     </thead>
                     <tbody>
@@ -125,6 +125,16 @@
                         }
                     </tbody>
                 </table>
+                <form asp-action="AddComment" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="row">
+                        <label class="control-label">New Ticket Comment</label>
+                        <textarea asp-for="CommentsDescription" type="text" class="form-control-lg"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary float-end mt-5">Add Comment</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

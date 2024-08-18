@@ -38,6 +38,7 @@
                     <th>
                         @Html.DisplayNameFor(model => model.StatusId)
                     </th>
+                    <th>No Of Comments</th>
                     <th>Comments</th>
                     <th>View</th>
                     <th>Edit</th>
@@ -48,23 +49,23 @@
                 @foreach (var item in Model.Tickets)
                 {
                     var colorcode = "Red";
-                    if (item.Status.Code=="Resolved")
+                    if (item.Status.Code == "Resolved")
                     {
                         colorcode = "Green";
                     }
-                   else if (item.Status.Code == "InProgress")
+                    else if (item.Status.Code == "InProgress")
                     {
                         colorcode = "Yellow";
                     }
-                   else if (item.Status.Code == "Reassigned")
+                    else if (item.Status.Code == "Reassigned")
                     {
                         colorcode = "Purple";
                     }
-                   else if (item.Status.Code == "AwaitingAssignment")
+                    else if (item.Status.Code == "AwaitingAssignment")
                     {
                         colorcode = "Red";
                     }
-                    
+
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.Id)
@@ -89,6 +90,9 @@
                         </td>
                         <td style="background-color:@colorcode;">
                             @Html.DisplayFor(modelItem => item.Status.Description)
+                        </td>
+                        <td class="text-center">
+                            <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id">    @item.TicketComments.Count()</a>
                         </td>
                         <td>
                             <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>

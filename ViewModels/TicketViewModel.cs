@@ -36,6 +36,7 @@ namespace HelpDeskSystem.ViewModels
         public Comment TicketComment { get; set; }
         [DisplayName("Attachment")]
         public string Attachment { get; set; }
+        public string CommentsDescription { get; set; }
 
 
     }
