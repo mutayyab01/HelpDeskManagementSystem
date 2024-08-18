@@ -3,6 +3,20 @@
 @{
     ViewData["Title"] = "Create";
 }
+@if (TempData["sizeError"] != null || TempData["extError"] != null)
+{
+    <div class="alert border-0 bg-light-danger alert-dismissible fade show py-2">
+        <div class="d-flex align-items-center">
+            <div class="fs-3 text-danger">
+                <i class="bi bi-x-circle-fill"></i>
+            </div>
+            <div class="ms-3">
+                <div class="text-danger">@TempData["sizeError"]@TempData["extError"]</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 <div class="card rounded-4">
     <div class="card-body rounded-circle">
         <div class="d-flex align-items-center">
@@ -11,7 +25,7 @@
         <hr />
         <div class="row">
             <div class="col-md-12">
-                <form asp-action="Create">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="row">
                         <div class="col-md-6">
@@ -30,32 +44,32 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="Status" class="control-label"></label>
-                                <input asp-for="Status" class="form-control" />
-                                <span asp-validation-for="Status" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Priority" class="control-label"></label>
-                                <input asp-for="Priority" class="form-control" />
-                                <span asp-validation-for="Priority" class="text-danger"></span>
+                                <label asp-for="PriorityId" class="control-label"></label>
+                                <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId">
+                                    <option value=" ">Select Priority</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="CategoryId" class="control-label"></label>
                                 <select asp-for="CategoryId" id="CategoryId" name="CategoryId" class="form-control get-subcategories" asp-items="ViewBag.CategoryId">
-                                <option value=" ">Select Category</option>
+                                    <option value=" ">Select Category</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="SubCategoryId" class="control-label"></label>
-                                <select asp-for="SubCategoryId" class="form-control" >
+                                <select asp-for="SubCategoryId" class="form-control">
                                     <option value=" ">Select Sub-Category</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Attachment" class="control-label"></label>
+                                <input type="file" asp-for="Attachment" id="Attachment" name="accachmentFile" class="form-control" accept=".png,.jpg,.jpeg,.pdf,doc,.docx" />
                             </div>
                         </div>
                     </div>
@@ -76,5 +90,11 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         <script src="~/CustomJS/TicketSystem.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                // Automatically select the first option in the dropdown
+                $("#CategoryId").prop('selectedIndex', 0);
+            });
+        </script>
     }
 }

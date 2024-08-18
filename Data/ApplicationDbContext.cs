@@ -52,11 +52,18 @@ namespace HelpDeskSystem.Data
              .HasForeignKey(c => c.TicketId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<SystemCodeDetail>()
-  .HasOne(c => c.SystemCode)
-  .WithMany()
-  .HasForeignKey(c => c.SystemCodeId)
-  .OnDelete(DeleteBehavior.Restrict);
+                        builder.Entity<SystemCodeDetail>()
+              .HasOne(c => c.SystemCode)
+              .WithMany()
+              .HasForeignKey(c => c.SystemCodeId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+
+                        builder.Entity<Ticket>()
+              .HasOne(c => c.Priority)
+              .WithMany()
+              .HasForeignKey(c => c.PriorityId)
+              .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

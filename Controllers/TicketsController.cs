@@ -9,16 +9,22 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using System.Security.Claims;
 using HelpDeskSystem.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System.Configuration;
 
 namespace HelpDeskSystem.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IConfiguration _configuration;
 
-        public TicketsController(ApplicationDbContext context)
+        public TicketsController(ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Tickets
@@ -27,6 +33,8 @@ namespace HelpDeskSystem.Controllers
             VM.Tickets = await _context.Tickets
                 .Include(t => t.CreatedBy)    
                 .Include(t => t.SubCategory)
+                .Include(t => t.Priority)
+                .Include(t => t.Status)
                 .OrderBy(x => x.CreatedOn)
                 .ToListAsync();
 
@@ -45,6 +53,9 @@ namespace HelpDeskSystem.Controllers
 
             var ticket = await _context.Tickets
                 .Include(t => t.CreatedBy)
+                .Include(t => t.SubCategory)
+                .Include(t => t.Status)
+                .Include(t => t.Priority)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ticket == null)
             {
@@ -57,6 +68,7 @@ namespace HelpDeskSystem.Controllers
         // GET: Tickets/Create
         public IActionResult Create()
         {
+            ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "PRIORITY"), "Id", "Description");
             ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
             return View();
@@ -67,15 +79,53 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TicketViewModel ticketVM)
+        public async Task<IActionResult> Create(TicketViewModel ticketVM,IFormFile accachmentFile)
         {
+            ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description", ticketVM.PriorityId);
+            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", ticketVM.CreatedById);
+            if (accachmentFile != null)
+            {
+                var ext = Path.GetExtension(accachmentFile.FileName);
+                var size = accachmentFile.Length;
+                if (ext == ".png" || ext == ".jpeg" || ext == ".jpg")
+                {
+                    if (size <= 1000000)//1Mb
+                    {
+                        var filename = "Ticket_Attachment" + DateTime.Now.ToString("dd-MM-yyyy hh mm ss tt") + "_" + accachmentFile.FileName;
+                        //var path = _configuration["FileSettings:UploadFolder"]!;
+                        string folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TicketAttachment");
+                        var filepath = Path.Combine(folderPath, filename);
+                        var steam = new FileStream(filepath, FileMode.Create);
+                        await accachmentFile.CopyToAsync(steam);
+                        ticketVM.Attachment = filename;
+                    }
+                    else
+                    {
+                        TempData["sizeError"] = "Document Must be less Than 1 Mb";
+                        return View(ticketVM);
+                    }
+                }
+                else
+                {
+                    TempData["extError"] = "Only PNG,JPEG,JPG,PDF,DOCX Documents Are Allowed";
+                    return View(ticketVM);
+
+                }
+            }
+
+
+            var pendingstatus = await _context.SystemCodeDetails.Include(x => x.SystemCode)
+                .Where(x => x.SystemCode.Code == "STATUS" && x.Code == "PENDING")
+                .FirstOrDefaultAsync();
             Ticket ticket = new();
             ticket.Id = ticketVM.Id;
             ticket.Title = ticketVM.Title;
             ticket.Description = ticketVM.Description;
-            ticket.Status = ticketVM.Status;
-            ticket.Priority = ticketVM.Priority;
+            ticket.StatusId = pendingstatus.Id;
+            ticket.PriorityId = ticketVM.PriorityId;
             ticket.SubCategoryId = ticketVM.SubCategoryId;
+            ticket.Attachment = ticketVM.Attachment;
 
 
 
@@ -99,8 +149,7 @@ namespace HelpDeskSystem.Controllers
             _context.Add(activity);
             await _context.SaveChangesAsync();
             TempData["MESSEGE"] = "Ticket Created Successfully";
-            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
-            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", ticket.CreatedById);
+           
             return RedirectToAction(nameof(Index));
             return View(ticket);
         }

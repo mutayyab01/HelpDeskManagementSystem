@@ -8,6 +8,7 @@
         <div class="d-flex align-items-center">
             <h6 class="mb-0">Tickets Details</h6>
         </div>
+        <hr />
         <div class="row">
             <table class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
                 <tr>
@@ -26,16 +27,16 @@
                 </tr>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Status)
+                        @Html.DisplayNameFor(model => model.StatusId)
                     </th>
                     <td>
-                        @Html.DisplayFor(model => model.Status)
+                        @Html.DisplayFor(model => model.Status.Description)
                     </td>
                     <th>
-                        @Html.DisplayNameFor(model => model.Priority)
+                        @Html.DisplayNameFor(model => model.PriorityId)
                     </th>
                     <td>
-                        @Html.DisplayFor(model => model.Priority)
+                        @Html.DisplayFor(model => model.Priority.Description)
                     </td>
                 </tr>
                 <tr>
@@ -52,7 +53,21 @@
                         @Html.DisplayFor(model => model.CreatedOn)
                     </td>
                 </tr>
-
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.SubCategoryId)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.SubCategory.Name)
+                    </td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Attachment)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(model => model.Attachment)
+                    </td>
+              
+                </tr>
             </table>
         </div>
     </div>

@@ -4,6 +4,7 @@ using HelpDeskSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HelpDeskSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240818081254_TicketPriorityDetails")]
+    partial class TicketPriorityDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,10 +275,6 @@ namespace HelpDeskSystem.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Attachment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CreatedById")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -290,8 +289,9 @@ namespace HelpDeskSystem.Data.Migrations
                     b.Property<int>("PriorityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SubCategoryId")
                         .HasColumnType("int");
@@ -305,8 +305,6 @@ namespace HelpDeskSystem.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("PriorityId");
-
-                    b.HasIndex("StatusId");
 
                     b.HasIndex("SubCategoryId");
 
@@ -613,12 +611,6 @@ namespace HelpDeskSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("HelpDeskSystem.Models.SystemCodeDetail", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HelpDeskSystem.Models.TicketSubCategory", "SubCategory")
                         .WithMany()
                         .HasForeignKey("SubCategoryId");
@@ -626,8 +618,6 @@ namespace HelpDeskSystem.Data.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Priority");
-
-                    b.Navigation("Status");
 
                     b.Navigation("SubCategory");
                 });

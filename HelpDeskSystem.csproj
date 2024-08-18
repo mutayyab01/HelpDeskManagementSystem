@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\plugins\nicescroll\css\" />
+    <Folder Include="wwwroot\TicketAttachment\" />
   </ItemGroup>
 
 </Project>

@@ -26,9 +26,13 @@ namespace HelpDeskSystem.Controllers
             else
             {
                 var tickets = await _context.Tickets
-                               .Include(t => t.CreatedBy)
-                               .OrderBy(x => x.CreatedOn)
-                               .ToListAsync();
+                .Include(t => t.CreatedBy)
+                .Include(t => t.SubCategory)
+                .Include(t => t.Priority)
+                .Include(t => t.Status)
+                .OrderBy(x => x.CreatedOn)
+                .ToListAsync();
+
                 return View(tickets);
             }
         }
