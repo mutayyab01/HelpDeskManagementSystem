@@ -1,4 +1,4 @@
-﻿@model HelpDeskSystem.ViewModels.TicketViewModel
+﻿@model IEnumerable<HelpDeskSystem.Models.SystemCode>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,31 +6,19 @@
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
-            <h6 class="mb-0">Recent Tickets</h6>
+            <h6 class="mb-0">Recent System Code</h6>
         </div>
         <p>
-            <a asp-action="Create" class="btn btn-primary">Add New Ticket</a>
+            <a asp-action="Create" class="btn btn-primary">Add New System Code</a>
         </p>
         <table class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Id)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Title)
+                        @Html.DisplayNameFor(model => model.Code)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Description)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Status)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Priority)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.SubCategoryId)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.CreatedBy)
@@ -38,33 +26,20 @@
                     <th>
                         @Html.DisplayNameFor(model => model.CreatedOn)
                     </th>
-                    <th>Comments</th>
                     <th>View</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Tickets)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Title)
+                            @Html.DisplayFor(modelItem => item.Code)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Status)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Priority)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.SubCategory.Name)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedBy.FullName)
@@ -72,9 +47,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedOn)
                         </td>
-                        <td>
-                            <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>
-                        </td>
+
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
                         </td>

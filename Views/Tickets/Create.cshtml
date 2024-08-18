@@ -1,4 +1,4 @@
-﻿@model HelpDeskSystem.Models.Ticket
+﻿@model HelpDeskSystem.ViewModels.TicketViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -42,6 +42,22 @@
                                 <span asp-validation-for="Priority" class="text-danger"></span>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CategoryId" class="control-label"></label>
+                                <select asp-for="CategoryId" id="CategoryId" name="CategoryId" class="form-control get-subcategories" asp-items="ViewBag.CategoryId">
+                                <option value=" ">Select Category</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SubCategoryId" class="control-label"></label>
+                                <select asp-for="SubCategoryId" class="form-control" >
+                                    <option value=" ">Select Sub-Category</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Create" class="btn btn-primary" />
@@ -59,5 +75,6 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/CustomJS/TicketSystem.js"></script>
     }
 }
