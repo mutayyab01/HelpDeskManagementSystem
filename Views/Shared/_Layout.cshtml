@@ -576,6 +576,22 @@
                     </a>
                 </li>
                 <li>
+                    <a asp-action="Index" asp-controller="Roles">
+                        <div class="parent-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+                        <div class="menu-title">System Roles</div>
+                    </a>
+                </li>
+                <li>
+                    <a asp-action="Index" asp-controller="Departments">
+                        <div class="parent-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+                        <div class="menu-title">Departments</div>
+                    </a>
+                </li>
+                <li>
                     <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnURL="@Url.Action("Index")">
                         <div class="parent-icon">
                             <i class="bi bi-lock-fill"></i>

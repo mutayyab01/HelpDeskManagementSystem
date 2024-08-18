@@ -44,25 +44,32 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, TicketViewModel VM)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
+            VM.TicketDetails = await _context.Tickets
                 .Include(t => t.CreatedBy)
                 .Include(t => t.SubCategory)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+
+            VM.TicketComments = await _context.Comments
+                .Include(x => x.CreatedBy)
+                .Include(x => x.Ticket)
+                .Where(x=>x.TicketId==id)
+                .ToListAsync();
+
+            if (VM.TicketDetails == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(VM);
         }
 
         // GET: Tickets/Create
@@ -88,7 +95,7 @@ namespace HelpDeskSystem.Controllers
             {
                 var ext = Path.GetExtension(accachmentFile.FileName);
                 var size = accachmentFile.Length;
-                if (ext == ".png" || ext == ".jpeg" || ext == ".jpg")
+                if (ext == ".png" || ext == ".jpeg" || ext == ".jpg"|| ext == ".pdf"|| ext == ".docx")
                 {
                     if (size <= 1000000)//1Mb
                     {
