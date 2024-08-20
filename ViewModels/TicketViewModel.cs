@@ -37,8 +37,14 @@ namespace HelpDeskSystem.ViewModels
         public TicketResolution TicketResolution { get; set; }
         public Comment TicketComment { get; set; }
         [DisplayName("Attachment")]
-        public string Attachment { get; set; }
+        public string? Attachment { get; set; }
+        [DisplayName("Comments Description")]
         public string CommentsDescription { get; set; }
+        [DisplayName("Assigned To")]
+        public string? AssignedToId { get; set; }
+        public ApplicationUser AssignedTo { get; set; }
+        [DisplayName("Assigned On")]
+        public DateTime? AssignedOn { get; set; }
 
 
     }

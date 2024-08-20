@@ -57,6 +57,7 @@ namespace HelpDeskSystem.Controllers
                 .Include(t => t.SubCategory)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
+                .Include(t => t.AssignedTo)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             VM.TicketComments = await _context.Comments
@@ -93,6 +94,7 @@ namespace HelpDeskSystem.Controllers
                 .Include(t => t.SubCategory)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
+                .Include(t => t.AssignedTo)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             VM.TicketComments = await _context.Comments
@@ -115,6 +117,52 @@ namespace HelpDeskSystem.Controllers
 
             return View(VM);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignedConfirmed(int id, TicketViewModel VM)
+        {
+            var reassignedstatus = await _context.SystemCodeDetails
+                .Include(x => x.SystemCode)
+                .Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS" && x.Code == "Assigned")
+                .FirstOrDefaultAsync();
+
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            TicketResolution resolution = new();
+            resolution.TicketId = id;
+            resolution.StatusId = reassignedstatus.Id;
+            resolution.CreatedOn = DateTime.Now;
+            resolution.CreatedById = UserId;
+            resolution.Description = "Ticket Assigned";
+            _context.Add(resolution);
+
+            var ticket = await _context.Tickets
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+            ticket.StatusId = reassignedstatus.Id;
+            ticket.AssignedToId = VM.AssignedToId;
+            ticket.AssignedOn = DateTime.Now;
+            _context.Update(ticket);
+
+            await _context.SaveChangesAsync();
+            //log The Audit Trails
+            var activity = new AuditTrail()
+            {
+                Action = "Re-Open",
+                TimeStamp = DateTime.Now,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                UserId = UserId,
+                Module = "TicketResolutions",
+                AffectedTable = "TicketResolution",
+            };
+
+            _context.Add(activity);
+            await _context.SaveChangesAsync();
+            TempData["MESSEGE"] = "Ticket Assigned Successfully";
+
+            return RedirectToAction("Resolve", new { id = id });
+        }
+
 
 
         [HttpPost]
@@ -160,6 +208,46 @@ namespace HelpDeskSystem.Controllers
             return RedirectToAction("Resolve", new { id = id });
         }
 
+        public async Task<IActionResult> TicketAssignment(int? id, TicketViewModel VM)
+        {
+            ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName");
+
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            VM.TicketDetails = await _context.Tickets
+                .Include(t => t.CreatedBy)
+                .Include(t => t.SubCategory)
+                .Include(t => t.Status)
+                .Include(t => t.Priority)
+                .Include(t => t.AssignedTo)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            VM.TicketComments = await _context.Comments
+                .Include(x => x.CreatedBy)
+                .Include(x => x.Ticket)
+                .Where(x => x.TicketId == id)
+                .ToListAsync();
+
+            VM.TicketResolutions = await _context.TicketResolutions
+               .Include(x => x.CreatedBy)
+               .Include(x => x.Ticket)
+               .Include(x => x.Status)
+               .Where(x => x.TicketId == id)
+               .ToListAsync();
+
+            if (VM.TicketDetails == null)
+            {
+                return NotFound();
+            }
+
+            return View(VM);
+        }
+
         public async Task<IActionResult> Resolve(int? id, TicketViewModel VM)
         {
             ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
@@ -175,6 +263,7 @@ namespace HelpDeskSystem.Controllers
                 .Include(t => t.SubCategory)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
+                .Include(t => t.AssignedTo)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             VM.TicketComments = await _context.Comments
@@ -312,12 +401,12 @@ namespace HelpDeskSystem.Controllers
             await _context.SaveChangesAsync();
             TempData["MESSEGE"] = "Ticket Comment Created Successfully";
 
-            return RedirectToAction(nameof(Details), new {id=id});
+            return RedirectToAction(nameof(Details), new { id = id });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult>ClosedConfirmed(int id, TicketViewModel VM)
+        public async Task<IActionResult> ClosedConfirmed(int id, TicketViewModel VM)
         {
             var closeStaus = await _context.SystemCodeDetails
                 .Include(x => x.SystemCode)

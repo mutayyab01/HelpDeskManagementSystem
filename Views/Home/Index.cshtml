@@ -135,6 +135,10 @@
                         {
                             colorcode = "Red";
                         }
+                        else if (item.Status.Code == "Pending")
+                        {
+                            colorcode = "#ffae00";
+                        }
                         <tr>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Id)

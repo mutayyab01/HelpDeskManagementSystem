@@ -70,6 +70,10 @@
                     {
                         colorcode = "Red";
                     }
+                    else if (item.Status.Code == "Pending")
+                    {
+                        colorcode = "#ffae00";
+                    }
 
                     <tr>
                         <td>
@@ -126,7 +130,7 @@
                                         @if (item.Status.Code != "Resolved" && item.Status.Code != "Closed")
                                         {
                                             <li>
-                                                <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item">Assign</a>
+                                                <a asp-action="TicketAssignment" asp-route-id="@item.Id" class="dropdown-item">Assign</a>
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li>
