@@ -39,27 +39,32 @@
                         @Html.DisplayNameFor(model => model.StatusId)
                     </th>
                     <th>No Of Comments</th>
-                    <th>Comments</th>
-                    <th>View</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model.Tickets)
                 {
-                    var colorcode = "Red";
+                    var colorcode = "#00ffbf";
                     if (item.Status.Code == "Resolved")
                     {
                         colorcode = "Green";
                     }
-                    else if (item.Status.Code == "InProgress")
+                    else if (item.Status.Code == "Escalated")
                     {
-                        colorcode = "Yellow";
+                        colorcode = "#a9c600";
                     }
                     else if (item.Status.Code == "Reassigned")
                     {
                         colorcode = "Purple";
+                    }
+                    else if (item.Status.Code == "Closed")
+                    {
+                        colorcode = "Darkred";
+                    }
+                    else if (item.Status.Code == "InProgress")
+                    {
+                        colorcode = "Blue";
                     }
                     else if (item.Status.Code == "AwaitingAssignment")
                     {
@@ -88,24 +93,69 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedOn)
                         </td>
-                        <td style="background-color:@colorcode;">
+                        <td style="background-color:@colorcode;" class="text-white">
                             @Html.DisplayFor(modelItem => item.Status.Description)
                         </td>
                         <td class="text-center">
                             <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id">    @item.TicketComments.Count()</a>
                         </td>
                         <td>
-                            <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>
+                            <div class="ms-auto">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary">Actions</button>
+                                    <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                                        <li>
+                                            <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="dropdown-item">Comments</a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="dropdown-item">Edit</a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">Details</a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item">Delete</a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        @if (item.Status.Code != "Resolved" && item.Status.Code != "Closed")
+                                        {
+                                            <li>
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item">Assign</a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a asp-action="Resolve" asp-route-id="@item.Id" class="dropdown-item">Resolve</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a asp-action="ReOpen" asp-route-id="@item.Id" class="dropdown-item">Re-Open</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
                         </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                        </td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a>
-                        </td>
-                        <td>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                        </td>
+                        @*  <td>
+                    <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>
+                    </td>
+                    <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                    </td>
+                    <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a>
+                    </td>
+                    <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    </td> *@
                     </tr>
                 }
             </tbody>

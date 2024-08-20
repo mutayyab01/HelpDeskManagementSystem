@@ -6,7 +6,7 @@
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
-            <h6 class="mb-0">Tickets Details</h6>
+            <h6 class="mb-0">Tickets Resolutions</h6>
         </div>
         <hr />
         <div class="row">
@@ -178,21 +178,32 @@
                         }
                     </tbody>
                 </table>
-                @if (@Model.TicketDetails.Status.Code != "Resolved" 
-                && @Model.TicketDetails.Status.Code != "Closed")
+                @if (@Model.TicketDetails.Status.Code != "Resolved" && @Model.TicketDetails.Status.Code != "Closed")
                 {
-                    <form asp-action="AddComment" method="post" enctype="multipart/form-data">
+                <form asp-action="ResolveConfirmed" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="row">
+                        <label class="control-label">Ticket Status</label>
+                        <select asp-for="StatusId" class="form-control single-select" asp-items="ViewBag.StatusId"></select>
+                    </div>
+                    <div class="row">
+                        <label class="control-label">New Ticket Resolution Comment</label>
+                        <textarea asp-for="CommentsDescription" type="text" class="form-control-lg"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary float-end mt-5">Add Resolution Status</button>
+                    </div>
+                    </form>
+                }
+                @if (@Model.TicketDetails.Status.Code == "Resolved")
+                {
+                    <form asp-action="ClosedConfirmed" method="post">
                         <input type="hidden" asp-for="Id" />
-                        <div class="row">
-                            <label class="control-label">New Ticket Comment</label>
-                            <textarea asp-for="CommentsDescription" type="text" class="form-control-lg"></textarea>
-                        </div>
                         <div class="form-group">
-                            <button class="btn btn-primary float-end mt-5">Add Comment</button>
+                            <button class="btn btn-primary float-end mt-5">Close Ticket</button>
                         </div>
                     </form>
                 }
-            
             </div>
         </div>
     </div>
