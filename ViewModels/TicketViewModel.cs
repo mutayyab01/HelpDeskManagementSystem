@@ -45,6 +45,7 @@ namespace HelpDeskSystem.ViewModels
         public ApplicationUser AssignedTo { get; set; }
         [DisplayName("Assigned On")]
         public DateTime? AssignedOn { get; set; }
+       
 
 
     }

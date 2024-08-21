@@ -4,6 +4,63 @@
     ViewData["Title"] = "Index";
 }
 <div class="card rounded-4">
+    <form id="myForm" asp-action="Index" method="post">
+        <div class="col-md-12">
+            <div class="row p-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="CreatedById" class="control-label"></label>
+                        <select asp-for="CreatedById" class="form-control single-select" asp-items="ViewBag.CreatedById">
+                            <option value=" ">Select User</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        <select asp-for="CategoryId" class="form-control single-select" asp-items="ViewBag.CategoryId">
+                            <option value=" ">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="StatusId" class="control-label"></label>
+                        <select asp-for="StatusId" class="form-control single-select" asp-items="ViewBag.StatusId">
+                            <option value=" ">Select Status</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="PriorityId" class="control-label"></label>
+                        <select asp-for="PriorityId" class="form-control single-select" asp-items="ViewBag.PriorityId">
+                            <option value=" ">Select Priority</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3 float-end me-5">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-outline-success px-5"><i class="bi bi-house-fill"></i> Search</button>
+                    <button type="button" id="clearBtn" class="btn btn-outline-danger px-5 ms-2"><i class="bi bi-x-circle"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+
+
+<div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
             <h6 class="mb-0">Recent Tickets</h6>
@@ -173,3 +230,15 @@
         </table>
     </div>
 </div>
+
+<script type="text/javascript">
+    document.getElementById("clearBtn").addEventListener("click", function () {
+        // Reset each form field to its default value
+        document.getElementById("Title").value = "";
+        document.getElementById("CreatedById").selectedIndex = 0;
+        document.getElementById("CategoryId").selectedIndex = 0;
+        document.getElementById("StatusId").selectedIndex = 0;
+        document.getElementById("PriorityId").selectedIndex = 0;
+        
+    });
+</script>
