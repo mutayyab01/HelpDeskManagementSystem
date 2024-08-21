@@ -1,12 +1,12 @@
 ﻿@model HelpDeskSystem.ViewModels.TicketViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Resolved Tickets";
 }
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
-            <h6 class="mb-0">Recent Tickets</h6>
+            <h6 class="mb-0">Resolved Tickets</h6>
         </div>
         <p>
             <a asp-action="Create" class="btn btn-primary">Add New Ticket</a>
@@ -137,13 +137,6 @@
                                                 <a asp-action="Resolve" asp-route-id="@item.Id" class="dropdown-item">Resolve</a>
                                             </li>
                                         }
-                                        else if (item.Status.Code == "Resolved")
-                                        {
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <a asp-action="ReOpen" asp-route-id="@item.Id" class="dropdown-item">Close</a>
-                                            </li>
-                                        }
                                         else
                                         {
                                             <li><hr class="dropdown-divider"></li>
@@ -155,18 +148,6 @@
                                 </div>
                             </div>
                         </td>
-                        @*  <td>
-                    <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id" class="btn btn-secondary">Comments</a>
-                    </td>
-                    <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                    </td>
-                    <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning">Details</a>
-                    </td>
-                    <td>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                    </td> *@
                     </tr>
                 }
             </tbody>

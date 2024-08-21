@@ -33,6 +33,7 @@
     <link href="~/assets/css/light-theme.css" rel="stylesheet" />
     <link href="~/assets/css/semi-dark.css" rel="stylesheet" />
     <link href="~/assets/css/header-colors.css" rel="stylesheet" />
+    <link href="~/assets/css/HighCharts.css" rel="stylesheet" />
     <style type="text/css">
         .page-footer {
             background: #fff;
@@ -504,12 +505,19 @@
                     </a>
                 </li>
                 <li>
-                    <a asp-action="Index" asp-controller="Tickets">
+                    <a href="javascript:;" class="has-arrow">
                         <div class="parent-icon">
                             <i class="bi bi-grid-fill"></i>
                         </div>
                         <div class="menu-title">Tickets</div>
                     </a>
+                    <ul>
+                        <li><a asp-controller="Tickets" asp-action="Index"><i class="bi bi-circle"></i>Recent Tickets</a></li>
+                        <li><a asp-controller="Tickets" asp-action="AssignedTickets"><i class="bi bi-circle"></i>Assigned Tickets</a></li>
+                        <li><a asp-controller="Tickets" asp-action="ResolvedTickets"><i class="bi bi-circle"></i>ReSolved Tickets</a></li>
+                        <li><a asp-controller="Tickets" asp-action="ClosedTickets"><i class="bi bi-circle"></i>Closed Tickets</a></li>
+
+                    </ul>
                 </li>
                 <li>
                     <a asp-action="Index" asp-controller="Comments">
@@ -735,6 +743,11 @@
     <!--app-->
     <script src="~/assets/js/app.js"></script>
     <script src="~/assets/js/index.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
     <script>
         new PerfectScrollbar(".best-product")
     </script>
