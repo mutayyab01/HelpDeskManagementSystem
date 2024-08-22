@@ -21,6 +21,7 @@ namespace HelpDeskSystem.Data
         public DbSet<SystemCodeDetail> SystemCodeDetails { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<TicketResolution> TicketResolutions { get; set; }
+        public DbSet<SystemTask> SystemTasks { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

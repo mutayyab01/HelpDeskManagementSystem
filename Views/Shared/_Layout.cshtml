@@ -1,10 +1,13 @@
-﻿@using HelpDeskSystem.Areas.Identity.Pages.Account
+﻿@{
+    var theme = Context.Request.Cookies["theme"] ?? "semi-dark";
+}
+@using HelpDeskSystem.Areas.Identity.Pages.Account
 @using Microsoft.AspNetCore.Identity;
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 <!doctype html>
-<html lang="en" class="semi-dark">
+<html lang="en" class="@theme">
 
 <head>
     <!-- Required meta tags -->
@@ -34,8 +37,9 @@
     <link href="~/assets/css/semi-dark.css" rel="stylesheet" />
     <link href="~/assets/css/header-colors.css" rel="stylesheet" />
     <link href="~/assets/css/HighCharts.css" rel="stylesheet" />
-    <link href="assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-
+    <link href="~/assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
     <style type="text/css">
         .page-footer {
             background: #fff;
@@ -64,12 +68,12 @@
     <div class="wrapper">
         <!--start top header-->
         <header class="top-header">
-            <nav class="navbar navbar-expand gap-3">
+            <nav class="navbar navbar-expand gap-3" style="background-image:linear-gradient(180deg,rgb(4,39,103) 0%,#3a0647 70% )">
                 <div class="mobile-toggle-icon fs-3">
                     <i class="bi bi-list"></i>
                 </div>
                 <div class="col-md-6">
-                    <h2>HELP DESK MANAGEMENT SYSTEM</h2>
+                    <h3 class="text-white">HELP DESK MANAGEMENT SYSTEM</h3>
                 </div>
                 <div class="top-navbar-right ms-auto">
                     <ul class="navbar-nav align-items-center">
@@ -82,7 +86,7 @@
                         </li>
                         <li class="nav-item dropdown dropdown-large">
                             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
-                                <div class="projects">
+                                <div class="projects text-white">
                                     <i class="bi bi-grid-3x3-gap-fill"></i>
                                 </div>
                             </a>
@@ -181,16 +185,23 @@
                                 </div><!--end row-->
                             </div>
                         </li>
+                        <li class="nav-item dark-mode d-none d-sm-flex">
+                            <a class="nav-link dark-mode-icon" href="javascript:void(0);" onclick="toggleTheme()">
+                                <div class="text-white">
+                                    <i class="bi bi-moon-fill"></i>
+                                </div>
+                            </a>
+                        </li>
                         <li class="nav-item dropdown dropdown-large">
                             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
-                                <div class="messages">
+                                <div class="messages text-white">
                                     <span class="notify-badge">5</span>
                                     <i class="bi bi-chat-right-fill"></i>
                                 </div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end p-0">
-                                <div class="p-2 border-bottom m-2">
-                                    <h5 class="h5 mb-0">Messages</h5>
+                                <div class="p-2 border-bottom m-2 ">
+                                    <h5 class="h5 mb-0 ">Messages</h5>
                                 </div>
                                 <div class="header-message-list p-2">
                                     <a class="dropdown-item" href="#">
@@ -285,7 +296,7 @@
                         </li>
                         <li class="nav-item dropdown dropdown-large">
                             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
-                                <div class="notifications">
+                                <div class="notifications text-white">
                                     <span class="notify-badge">8</span>
                                     <i class="bi bi-bell-fill"></i>
                                 </div>
@@ -403,11 +414,15 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item dropdown dropdown-user-setting">
+                        <li class="nav-item dropdown dropdown-user-setting ">
                             <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
                                 <div class="user-setting d-flex align-items-center">
                                     <img src="~/assets/images/avatars/avatar-1.png" class="user-img" alt="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <span>Hello @User.Identity?.Name!</span>
+                                    <div class="d-none d-sm-block text-white">
+                                        <p class="user-name mb-0 text-white"> @User.Identity?.Name!</p>
+                                        <small class="mb-0 dropdown-user-designation">Admin</small>
+                                    </div>
+                                    @* <span>Hello @User.Identity?.Name!</span> *@
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -484,7 +499,7 @@
         </header>
         <!--end top header-->
         <!--start sidebar -->
-        <aside class="sidebar-wrapper" data-simplebar="true">
+        <aside class="sidebar-wrapper" data-simplebar="true" style="background-image:linear-gradient(180deg,rgb(5,39,103) 0%,#3a0647 70% ) !important">
             <div class="sidebar-header">
                 <div>
                     <img src="~/assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
@@ -602,6 +617,14 @@
                     </a>
                 </li>
                 <li>
+                    <a asp-action="Index" asp-controller="SystemTasks">
+                        <div class="parent-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+                        <div class="menu-title">System Tasks</div>
+                    </a>
+                </li>
+                <li>
                     <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnURL="@Url.Action("Index")">
                         <div class="parent-icon">
                             <i class="bi bi-lock-fill"></i>
@@ -665,75 +688,79 @@
         <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
         <!--End Back To Top Button-->
         <!--start switcher-->
-        @*     <div class="switcher-body">
-        <button class="btn btn-primary btn-switcher shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i class="bi bi-paint-bucket me-0"></i></button>
-        <div class="offcanvas offcanvas-end shadow border-start-0 p-2" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling">
-        <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Theme Customizer</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-        <h6 class="mb-0">Theme Variation</h6>
-        <hr>
-        <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="LightTheme" value="option1" checked>
-        <label class="form-check-label" for="LightTheme">Light</label>
-        </div>
-        <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="DarkTheme" value="option2">
-        <label class="form-check-label" for="DarkTheme">Dark</label>
-        </div>
-        <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="SemiDarkTheme" value="option3">
-        <label class="form-check-label" for="SemiDarkTheme">Semi Dark</label>
-        </div>
-        <hr>
-        <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="MinimalTheme" value="option3">
-        <label class="form-check-label" for="MinimalTheme">Minimal Theme</label>
-        </div>
-        <hr />
-        <h6 class="mb-0">Header Colors</h6>
-        <hr />
-        <div class="header-colors-indigators">
-        <div class="row row-cols-auto g-3">
-        <div class="col">
-        <div class="indigator headercolor1" id="headercolor1"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor2" id="headercolor2"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor3" id="headercolor3"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor4" id="headercolor4"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor5" id="headercolor5"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor6" id="headercolor6"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor7" id="headercolor7"></div>
-        </div>
-        <div class="col">
-        <div class="indigator headercolor8" id="headercolor8"></div>
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
+        @* <div class="switcher-body">
+            <button class="btn btn-primary btn-switcher shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i class="bi bi-paint-bucket me-0"></i></button>
+            <div class="offcanvas offcanvas-end shadow border-start-0 p-2" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Theme Customizer</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <h6 class="mb-0">Theme Variation</h6>
+                    <hr>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="LightTheme" value="option1" checked>
+                        <label class="form-check-label" for="LightTheme">Light</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="DarkTheme" value="option2">
+                        <label class="form-check-label" for="DarkTheme">Dark</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="SemiDarkTheme" value="option3">
+                        <label class="form-check-label" for="SemiDarkTheme">Semi Dark</label>
+                    </div>
+                    <hr>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="MinimalTheme" value="option3">
+                        <label class="form-check-label" for="MinimalTheme">Minimal Theme</label>
+                    </div>
+                    <hr />
+                    <h6 class="mb-0">Header Colors</h6>
+                    <hr />
+                    <div class="header-colors-indigators">
+                        <div class="row row-cols-auto g-3">
+                            <div class="col">
+                                <div class="indigator headercolor1" id="headercolor1"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor2" id="headercolor2"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor3" id="headercolor3"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor4" id="headercolor4"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor5" id="headercolor5"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor6" id="headercolor6"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor7" id="headercolor7"></div>
+                            </div>
+                            <div class="col">
+                                <div class="indigator headercolor8" id="headercolor8"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div> *@
         <!--end switcher-->
     </div>
     <!--end wrapper-->
-
     <!-- Bootstrap bundle JS -->
     <script src="~/assets/js/bootstrap.bundle.min.js"></script>
     <!--plugins-->
     <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/js/table-datatable.js"></script>
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/form-select2.js"></script>
     <script src="~/assets/plugins/simplebar/js/simplebar.min.js"></script>
     <script src="~/assets/plugins/metismenu/js/metisMenu.min.js"></script>
     <script src="~/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
@@ -743,6 +770,7 @@
     <script src="~/assets/plugins/chartjs/js/Chart.min.js"></script>
     <script src="~/assets/plugins/chartjs/js/Chart.extension.js"></script>
     <script src="~/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
+
     <!--app-->
     <script src="~/assets/js/app.js"></script>
     <script src="~/assets/js/index.js"></script>
@@ -751,13 +779,54 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://code.highcharts.com/highcharts-3d.js"></script>
-    <script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
-    <script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
-    <script src="assets/js/table-datatable.js"></script>
+    <script type="text/javascript">
+        $('.single-select').select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+        $('.multiple-select').select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+
     <script>
         new PerfectScrollbar(".best-product")
     </script>
 
+
+
+    <script type="text/javascript">
+        function toggleTheme() {
+            const htmlElement = document.documentElement;
+            let newTheme;
+
+            if (htmlElement.classList.contains('semi-dark')) {
+                htmlElement.classList.remove('semi-dark');
+                htmlElement.classList.add('dark');
+                newTheme = 'dark';
+            } else if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                newTheme = 'light';
+            } else {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('semi-dark');
+                newTheme = 'semi-dark';
+            }
+
+            document.cookie = `theme=${newTheme};path=/;max-age=31536000`; // Store the theme in a cookie for 1 year
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
@@ -844,7 +913,8 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - HelpDeskSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2
+            4 - HelpDeskSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
