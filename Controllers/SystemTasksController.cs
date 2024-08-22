@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
+using System.Security.Claims;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -22,7 +23,10 @@ namespace HelpDeskSystem.Controllers
         // GET: SystemTasks
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.SystemTasks.Include(s => s.Parent);
+            var applicationDbContext = _context.SystemTasks
+                .Include(s => s.Parent)
+                .Include(s => s.CreatedBy);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -48,7 +52,7 @@ namespace HelpDeskSystem.Controllers
         // GET: SystemTasks/Create
         public IActionResult Create()
         {
-            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Id");
+            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Name");
             return View();
         }
 
@@ -57,15 +61,18 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,ParentId,OrderNo")] SystemTask systemTask)
+        public async Task<IActionResult> Create(SystemTask systemTask)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(systemTask);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Id", systemTask.ParentId);
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            systemTask.CreatedOn = DateTime.Now;
+            systemTask.CreatedById = UserId;
+
+
+            _context.Add(systemTask);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Name", systemTask.ParentId);
             return View(systemTask);
         }
 
@@ -82,7 +89,7 @@ namespace HelpDeskSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Id", systemTask.ParentId);
+            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Name", systemTask.ParentId);
             return View(systemTask);
         }
 
@@ -91,34 +98,37 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,ParentId,OrderNo")] SystemTask systemTask)
+        public async Task<IActionResult> Edit(int id, SystemTask systemTask)
         {
             if (id != systemTask.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+            try
             {
-                try
-                {
-                    _context.Update(systemTask);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SystemTaskExists(systemTask.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                systemTask.ModifiedOn = DateTime.Now;
+                systemTask.ModifiedById = UserId;
+
+                _context.Update(systemTask);
+                await _context.SaveChangesAsync();
             }
-            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Id", systemTask.ParentId);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SystemTaskExists(systemTask.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+            ViewData["ParentId"] = new SelectList(_context.SystemTasks, "Id", "Name", systemTask.ParentId);
             return View(systemTask);
         }
 

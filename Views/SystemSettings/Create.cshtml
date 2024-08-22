@@ -1,4 +1,4 @@
-﻿@model HelpDeskSystem.Models.SystemTask
+﻿@model HelpDeskSystem.Models.SystemSetting
 
 @{
     ViewData["Title"] = "Create";
@@ -6,7 +6,7 @@
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
-            <h6 class="mb-0">Add new System Task</h6>
+            <h6 class="mb-0">Add new System Setting</h6>
         </div>
         <hr />
         <div class="row">
@@ -30,35 +30,25 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="ParentId" class="control-label"></label>
-                                <select asp-for="ParentId" class="form-control single-select" asp-items="ViewBag.ParentId">
-                                    <option value=" ">Select Parent Name</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="OrderNo" class="control-label"></label>
-                                <input asp-for="OrderNo" class="form-control" />
-                                <span asp-validation-for="OrderNo" class="text-danger"></span>
+                                <label asp-for="Value" class="control-label"></label>
+                                <input asp-for="Value" class="form-control" />
+                                <span asp-validation-for="Value" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group p-3">
+                    <div class="form-group">
                         <input type="submit" value="Create" class="btn btn-primary" />
                     </div>
                 </form>
             </div>
         </div>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
+        <div>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+        @section Scripts {
+            @{
+                await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            }
+        }

@@ -1,15 +1,15 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.SystemTask>
+﻿@model IEnumerable<HelpDeskSystem.Models.SystemSetting>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "System Setting";
 }
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
-            <h6 class="mb-0">Recent System Tasks</h6>
+            <h6 class="mb-0">Recent System Setting</h6>
         </div>
         <p>
-            <a asp-action="Create" class="btn btn-primary">Add New System Task</a>
+            <a asp-action="Create" class="btn btn-primary">Add New System Setting</a>
         </p>
         <table id="example" class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
             <thead>
@@ -21,16 +21,19 @@
                         @Html.DisplayNameFor(model => model.Name)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Parent)
+                        @Html.DisplayNameFor(model => model.Value)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.OrderNo)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.CreatedById)
+                        @Html.DisplayNameFor(model => model.CreatedBy)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.CreatedOn)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ModifiedBy)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ModifiedOn)
                     </th>
                     <th>View</th>
                     <th>Edit</th>
@@ -48,16 +51,19 @@
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Parent.Name)
+                            @Html.DisplayFor(modelItem => item.Value)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.OrderNo)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.CreatedBy.FullName)
+                            @Html.DisplayFor(modelItem => item.CreatedBy.Id)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedOn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedBy.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ModifiedOn)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
