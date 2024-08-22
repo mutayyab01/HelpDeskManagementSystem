@@ -88,7 +88,42 @@ namespace HelpDeskSystem.Controllers
                 .OrderBy(x => x.CreatedOn)
                 .ToListAsync();
 
+            var alltickets = _context.Tickets
+                .Include(t => t.CreatedBy)
+                .Include(t => t.SubCategory)
+                .Include(t => t.Priority)
+                .Include(t => t.Status)
+                .Include(t => t.TicketComments)
+                .Where(t => t.Status.Code == "Assigned")
+                .OrderBy(x => x.CreatedOn)
+            .AsQueryable();
+            if (VM != null && !string.IsNullOrEmpty(VM.Title))
+            {
+                alltickets = alltickets.Where(x => x.Title.Contains(VM.Title));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+            {
+                alltickets = alltickets.Where(x => x.CreatedById == VM.CreatedById);
+            }
+            if (VM != null && VM.StatusId > 0)
+            {
+                alltickets = alltickets.Where(x => x.StatusId == VM.StatusId);
+            }
+            if (VM != null && VM.PriorityId > 0)
+            {
+                alltickets = alltickets.Where(x => x.PriorityId == VM.PriorityId);
+            }
+            if (VM != null && VM.CategoryId > 0)
+            {
+                alltickets = alltickets.Where(x => x.SubCategory.CategoryId == VM.CategoryId);
+            }
 
+            VM.Tickets = await alltickets.ToListAsync();
+
+            ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description");
+            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
 
             return View(VM);
         }
@@ -100,15 +135,43 @@ namespace HelpDeskSystem.Controllers
                .Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS" && x.Code == "Closed")
                .FirstOrDefaultAsync();
 
-            VM.Tickets = await _context.Tickets
-                .Include(t => t.CreatedBy)
-                .Include(t => t.SubCategory)
-                .Include(t => t.Priority)
-                .Include(t => t.Status)
-                .Include(t => t.TicketComments)
-                .OrderBy(x => x.CreatedOn)
-                .Where(x => x.StatusId == closedstatus.Id)
-                .ToListAsync();
+            var alltickets = _context.Tickets
+                 .Include(t => t.CreatedBy)
+                 .Include(t => t.SubCategory)
+                 .Include(t => t.Priority)
+                 .Include(t => t.Status)
+                 .Include(t => t.TicketComments)
+                 .Where(t => t.Status.Id==closedstatus.Id)
+                 .OrderBy(x => x.CreatedOn)
+             .AsQueryable();
+            if (VM != null && !string.IsNullOrEmpty(VM.Title))
+            {
+                alltickets = alltickets.Where(x => x.Title.Contains(VM.Title));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+            {
+                alltickets = alltickets.Where(x => x.CreatedById == VM.CreatedById);
+            }
+            if (VM != null && VM.StatusId > 0)
+            {
+                alltickets = alltickets.Where(x => x.StatusId == VM.StatusId);
+            }
+            if (VM != null && VM.PriorityId > 0)
+            {
+                alltickets = alltickets.Where(x => x.PriorityId == VM.PriorityId);
+            }
+            if (VM != null && VM.CategoryId > 0)
+            {
+                alltickets = alltickets.Where(x => x.SubCategory.CategoryId == VM.CategoryId);
+            }
+
+            VM.Tickets = await alltickets.ToListAsync();
+
+            ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description");
+            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
+
             return View(VM);
         }
 
@@ -119,15 +182,43 @@ namespace HelpDeskSystem.Controllers
                .Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS" && x.Code == "REsolved")
                .FirstOrDefaultAsync();
 
-            VM.Tickets = await _context.Tickets
+            var alltickets = _context.Tickets
                 .Include(t => t.CreatedBy)
                 .Include(t => t.SubCategory)
                 .Include(t => t.Priority)
                 .Include(t => t.Status)
                 .Include(t => t.TicketComments)
+                .Where(t => t.Status.Id == resolvedstatus.Id)
                 .OrderBy(x => x.CreatedOn)
-                .Where(t => t.StatusId == resolvedstatus.Id)
-                .ToListAsync();
+            .AsQueryable();
+            if (VM != null && !string.IsNullOrEmpty(VM.Title))
+            {
+                alltickets = alltickets.Where(x => x.Title.Contains(VM.Title));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+            {
+                alltickets = alltickets.Where(x => x.CreatedById == VM.CreatedById);
+            }
+            if (VM != null && VM.StatusId > 0)
+            {
+                alltickets = alltickets.Where(x => x.StatusId == VM.StatusId);
+            }
+            if (VM != null && VM.PriorityId > 0)
+            {
+                alltickets = alltickets.Where(x => x.PriorityId == VM.PriorityId);
+            }
+            if (VM != null && VM.CategoryId > 0)
+            {
+                alltickets = alltickets.Where(x => x.SubCategory.CategoryId == VM.CategoryId);
+            }
+
+            VM.Tickets = await alltickets.ToListAsync();
+
+            ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description");
+            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
+
             return View(VM);
         }
 
