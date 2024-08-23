@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
+using System.Security.Claims;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -22,7 +23,9 @@ namespace HelpDeskSystem.Controllers
         // GET: SystemSettings
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.SystemSettings.Include(s => s.CreatedBy).Include(s => s.ModifiedBy);
+            var applicationDbContext = _context.SystemSettings
+                .Include(s => s.CreatedBy)
+                .Include(s => s.ModifiedBy);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -59,14 +62,17 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,Value,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemSetting systemSetting)
+        public async Task<IActionResult> Create(SystemSetting systemSetting)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(systemSetting);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            systemSetting.CreatedOn = DateTime.Now;
+            systemSetting.CreatedById = UserId;
+
+            _context.Add(systemSetting);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", systemSetting.CreatedById);
             ViewData["ModifiedById"] = new SelectList(_context.Users, "Id", "Id", systemSetting.ModifiedById);
             return View(systemSetting);
@@ -95,33 +101,36 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,Value,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemSetting systemSetting)
+        public async Task<IActionResult> Edit(int id, SystemSetting systemSetting)
         {
             if (id != systemSetting.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+
+            try
             {
-                try
-                {
-                    _context.Update(systemSetting);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SystemSettingExists(systemSetting.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                systemSetting.ModifiedOn = DateTime.Now;
+                systemSetting.ModifiedById = UserId;
+
+                _context.Update(systemSetting);
+                await _context.SaveChangesAsync();
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SystemSettingExists(systemSetting.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", systemSetting.CreatedById);
             ViewData["ModifiedById"] = new SelectList(_context.Users, "Id", "Id", systemSetting.ModifiedById);
             return View(systemSetting);

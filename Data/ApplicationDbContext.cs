@@ -23,6 +23,7 @@ namespace HelpDeskSystem.Data
         public DbSet<TicketResolution> TicketResolutions { get; set; }
         public DbSet<SystemTask> SystemTasks { get; set; }
         public DbSet<SystemSetting> SystemSettings { get; set; }
+        public DbSet<UserRoleProfile> UserRoleProfiles { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -64,22 +65,31 @@ namespace HelpDeskSystem.Data
 
             builder.Entity<Comment>()
              .HasOne(c => c.Ticket)
-             .WithMany(c=>c.TicketComments)
+             .WithMany(c => c.TicketComments)
              .HasForeignKey(c => c.TicketId)
              .OnDelete(DeleteBehavior.Restrict);
 
-                        builder.Entity<SystemCodeDetail>()
-              .HasOne(c => c.SystemCode)
-              .WithMany()
-              .HasForeignKey(c => c.SystemCodeId)
-              .OnDelete(DeleteBehavior.Restrict);
+                    builder.Entity<SystemCodeDetail>()
+          .HasOne(c => c.SystemCode)
+          .WithMany()
+          .HasForeignKey(c => c.SystemCodeId)
+          .OnDelete(DeleteBehavior.Restrict);
 
 
-                        builder.Entity<Ticket>()
-              .HasOne(c => c.Priority)
-              .WithMany()
-              .HasForeignKey(c => c.PriorityId)
-              .OnDelete(DeleteBehavior.Restrict);
+                    builder.Entity<Ticket>()
+          .HasOne(c => c.Priority)
+          .WithMany()
+          .HasForeignKey(c => c.PriorityId)
+          .OnDelete(DeleteBehavior.Restrict);
+
+
+          builder.Entity<UserRoleProfile>()
+         .HasOne(c => c.Task)
+         .WithMany()
+         .HasForeignKey(c => c.TaskId)
+         .OnDelete(DeleteBehavior.Restrict);
+
+
         }
     }
 }

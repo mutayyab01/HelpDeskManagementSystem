@@ -22,7 +22,7 @@ namespace HelpDeskSystem.Models
 
         public string CreatedById { get; set; }
         [DisplayName("Created By")]
-        public ApplicationUser CreatedBy { get; set;}
+        public ApplicationUser CreatedBy { get; set; }
         [DisplayName("Created On")]
         public DateTime CreatedOn { get; set; }
         [DisplayName("Ticket Sub-Category")]
@@ -35,5 +35,22 @@ namespace HelpDeskSystem.Models
         public string? AssignedToId { get; set; }
         public ApplicationUser AssignedTo { get; set; }
         public DateTime? AssignedOn { get; set; }
-     }
+        public int? TicketDuration
+        {
+            get
+            {
+                if (CreatedOn == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    DateTime now = DateTime.Now;
+                    TimeSpan difference = now.Subtract(CreatedOn);
+                    return difference.Days;
+                }
+            }
+
+        }
+    }
 }

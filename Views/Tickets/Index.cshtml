@@ -94,7 +94,9 @@
                     <th>
                         @Html.DisplayNameFor(model => model.StatusId)
                     </th>
+
                     <th>No Of Comments</th>
+                    <th>Durations</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -159,6 +161,21 @@
                         <td class="text-center">
                             <a asp-controller="Comments" asp-action="TicketComments" asp-route-id="@item.Id">    @item.TicketComments.Count()</a>
                         </td>
+                        @if (Convert.ToInt32(Model.MainDuration.Value) > item.TicketDuration)
+                        {
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TicketDuration)
+                                - Days
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="background-color:red;" class="text-white">
+                                @Html.DisplayFor(modelItem => item.TicketDuration)
+                                - Days
+                            </td>
+                        }
+
                         <td>
                             <div class="ms-auto">
                                 <div class="btn-group">
@@ -238,7 +255,7 @@
         document.getElementById("CategoryId").selectedIndex = 0;
         document.getElementById("StatusId").selectedIndex = 0;
         document.getElementById("PriorityId").selectedIndex = 0;
-        
+
     });
-  
+
 </script>

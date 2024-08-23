@@ -1,27 +1,27 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.SystemSetting>
+﻿@model IEnumerable<HelpDeskSystem.Models.UserRoleProfile>
 
 @{
-    ViewData["Title"] = "System Setting";
+    ViewData["Title"] = "Index";
 }
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
-            <h6 class="mb-0">Recent System Setting</h6>
+            <h6 class="mb-0">Recent User Role Profile</h6>
         </div>
         <p>
-            <a asp-action="Create" class="btn btn-primary">Add New System Setting</a>
+            <a asp-action="Create" class="btn btn-primary">Add New User Role Profile</a>
         </p>
         <table id="example" class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Code)
+                        @Html.DisplayNameFor(model => model.Id)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Name)
+                        @Html.DisplayNameFor(model => model.Task)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Value)
+                        @Html.DisplayNameFor(model => model.Role)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.CreatedBy)
@@ -40,13 +40,13 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Code)
+                            @Html.DisplayFor(modelItem => item.Id)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Name)
+                            @Html.DisplayFor(modelItem => item.Task.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Value)
+                            @Html.DisplayFor(modelItem => item.Role.Name)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedBy.FullName)
@@ -54,6 +54,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedOn)
                         </td>
+                  
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
                         </td>
