@@ -35,6 +35,9 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Gender)
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Role)
+                    </th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -62,7 +65,10 @@
                             @Html.DisplayFor(modelItem => item.Email)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Gender)
+                            @Html.DisplayFor(modelItem => item.Gender.Code)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Role.Name)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>

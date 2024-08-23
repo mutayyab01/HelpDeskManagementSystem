@@ -12,7 +12,7 @@ namespace HelpDeskSystem.Models
         public int TaskId { get; set; }
         public SystemTask Task { get; set; }
         [DisplayName("System Role")]
-        public string RoleId { get; set; }
+        public string? RoleId { get; set; }
         public IdentityRole Role { get; set; }
 
     }

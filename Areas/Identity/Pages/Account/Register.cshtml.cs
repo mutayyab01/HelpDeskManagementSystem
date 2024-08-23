@@ -135,7 +135,7 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
                 user.FirstName = Input.FirstName;
                 user.MiddleName = Input.MiddleName;
                 user.LastName = Input.LastName;
-                user.Gender = Input.Gender;
+              //  user.Gender = Input.Gender;
                 user.City = Input.City;
                 user.Country = Input.Country;
 

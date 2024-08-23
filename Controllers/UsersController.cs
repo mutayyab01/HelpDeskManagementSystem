@@ -4,6 +4,7 @@ using HelpDeskSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -26,7 +27,10 @@ namespace HelpDeskSystem.Controllers
         // GET: UsersController
         public async Task<ActionResult> Index()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(x=>x.Role)
+                .Include(x=>x.Gender)
+                .ToListAsync();
             return View(users);
         }
 
@@ -39,6 +43,9 @@ namespace HelpDeskSystem.Controllers
         // GET: UsersController/Create
         public ActionResult Create()
         {
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x=>x.SystemCode).Where(x=>x.SystemCode.Code=="GENDER"), "Id", "Code");
+            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
+
             return View();
         }
 
@@ -47,6 +54,8 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ApplicationUser user)
         {
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code");
+            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
             try
             {
                 var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -60,7 +69,8 @@ namespace HelpDeskSystem.Controllers
                 Registereduser.Country = user.Country;
                 Registereduser.UserName = user.UserName;
                 Registereduser.NormalizedUserName = user.NormalizedUserName;
-                Registereduser.Gender = user.Gender;
+                Registereduser.GenderId = user.GenderId;
+                Registereduser.RoleId = user.RoleId;
                 Registereduser.PhoneNumber = user.PhoneNumber;
                 Registereduser.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
                 var result = await _userManager.CreateAsync(Registereduser, user.PasswordHash);
