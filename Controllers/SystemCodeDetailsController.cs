@@ -69,21 +69,8 @@ namespace HelpDeskSystem.Controllers
             systemCodeDetail.CreatedById = UserId;
 
             _context.Add(systemCodeDetail);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
 
-            //log The Audit Trails
-            var activity = new AuditTrail()
-            {
-                Action = "Create",
-                TimeStamp = DateTime.Now,
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                UserId = UserId,
-                Module = "SystemCodeDetails",
-                AffectedTable = "SystemCodeDetail",
-            };
-
-            _context.Add(activity);
-            await _context.SaveChangesAsync();
             TempData["MESSEGE"] = "System Codes Details Created Successfully";
 
             ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description", systemCodeDetail.SystemCodeId);
@@ -129,21 +116,9 @@ namespace HelpDeskSystem.Controllers
                 systemCodeDetail.ModifiedById = UserId;
 
                 _context.Update(systemCodeDetail);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
 
-                //log The Audit Trails
-                var activity = new AuditTrail()
-                {
-                    Action = "Update",
-                    TimeStamp = DateTime.Now,
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    UserId = UserId,
-                    Module = "SystemCodes",
-                    AffectedTable = "SystemCode",
-                };
-
-                _context.Add(activity);
-                await _context.SaveChangesAsync();
+              
                 TempData["MESSEGE"] = "System Codes Details Updated Successfully";
             }
             catch (DbUpdateConcurrencyException)

@@ -72,7 +72,7 @@ namespace HelpDeskSystem.Controllers
             city.CreatedById = UserId;
 
             _context.Add(city);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
 
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", city.CountryId);
@@ -118,7 +118,7 @@ namespace HelpDeskSystem.Controllers
                 city.ModifiedById = UserId;
 
                 _context.Update(city);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
             }
             catch (DbUpdateConcurrencyException)
             {

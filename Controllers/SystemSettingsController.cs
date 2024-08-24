@@ -70,7 +70,7 @@ namespace HelpDeskSystem.Controllers
             systemSetting.CreatedById = UserId;
 
             _context.Add(systemSetting);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
 
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", systemSetting.CreatedById);

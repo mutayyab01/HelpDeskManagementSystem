@@ -1,4 +1,6 @@
-﻿using HelpDeskSystem.Models;
+﻿using HelpDeskSystem.AuditsManager;
+using HelpDeskSystem.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -26,9 +28,75 @@ namespace HelpDeskSystem.Data
         public DbSet<UserRoleProfile> UserRoleProfiles { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
+
+        public virtual async Task<int> SaveChangesAsync(string userId = null)
+        {
+            OnBeforeSaveChanges(userId);
+            var result = await base.SaveChangesAsync();
+            return result;
+        }
+
+        private void OnBeforeSaveChanges(string userId)
+        {
+            ChangeTracker.DetectChanges();
+            var auditEntries = new List<AuditEntry>();
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.Entity is AuditTrail || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                    continue;
+                var auditEntry = new AuditEntry(entry);
+                auditEntry.TableName = entry.Entity.GetType().Name;
+                auditEntry.Module = entry.Entity.GetType().Name;
+                auditEntry.UserId = userId;
+                auditEntries.Add(auditEntry);
+
+                foreach (var property in entry.Properties)
+                {
+                    string propertyname = property.Metadata.Name;
+                    if (property.Metadata.IsPrimaryKey())
+                    {
+                        auditEntry.KeyValues[propertyname] = property.CurrentValue;
+                        continue;
+                    }
+
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            auditEntry.AuditType = AuditType.Create;
+                            auditEntry.NewValues[propertyname] = property.CurrentValue;
+                            break;
+                        case EntityState.Deleted:
+                            auditEntry.AuditType = AuditType.Delete;
+                            auditEntry.OldValues[propertyname] = property.OriginalValue;
+                            break;
+                        case EntityState.Modified:
+                            if (property.IsModified)
+                            {
+                                auditEntry.ChangedColumns.Add(propertyname);
+                                auditEntry.AuditType = AuditType.Update;
+                                auditEntry.OldValues[propertyname] = property.OriginalValue;
+                                auditEntry.NewValues[propertyname] = property.CurrentValue;
+                            }
+                            break;
+                    }
+                }
+            }
+            foreach (var auditEntry in auditEntries)
+            {
+                AuditTrails.Add(auditEntry.ToAudit());
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            foreach (var releationship in builder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys()))
+            {
+                releationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             builder.Entity<Ticket>()
                 .HasOne(c => c.CreatedBy)
                 .WithMany()
@@ -71,25 +139,25 @@ namespace HelpDeskSystem.Data
              .HasForeignKey(c => c.TicketId)
              .OnDelete(DeleteBehavior.Restrict);
 
-                    builder.Entity<SystemCodeDetail>()
-          .HasOne(c => c.SystemCode)
-          .WithMany()
-          .HasForeignKey(c => c.SystemCodeId)
-          .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<SystemCodeDetail>()
+  .HasOne(c => c.SystemCode)
+  .WithMany()
+  .HasForeignKey(c => c.SystemCodeId)
+  .OnDelete(DeleteBehavior.Restrict);
 
 
-                    builder.Entity<Ticket>()
-          .HasOne(c => c.Priority)
-          .WithMany()
-          .HasForeignKey(c => c.PriorityId)
-          .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Ticket>()
+  .HasOne(c => c.Priority)
+  .WithMany()
+  .HasForeignKey(c => c.PriorityId)
+  .OnDelete(DeleteBehavior.Restrict);
 
 
-          builder.Entity<UserRoleProfile>()
-         .HasOne(c => c.Task)
-         .WithMany()
-         .HasForeignKey(c => c.TaskId)
-         .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<UserRoleProfile>()
+           .HasOne(c => c.Task)
+           .WithMany()
+           .HasForeignKey(c => c.TaskId)
+           .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ApplicationUser>()
         .HasOne(c => c.Role)

@@ -64,21 +64,9 @@ namespace HelpDeskSystem.Controllers
             systemCode.CreatedOn = DateTime.Now;
             systemCode.CreatedById = UserId;
             _context.Add(systemCode);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
 
-            //log The Audit Trails
-            var activity = new AuditTrail()
-            {
-                Action = "Create",
-                TimeStamp = DateTime.Now,
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                UserId = UserId,
-                Module = "SystemCodes",
-                AffectedTable = "SystemCode",
-            };
-
-            _context.Add(activity);
-            await _context.SaveChangesAsync();
+         
             TempData["MESSEGE"] = "System Codes Created Successfully";
             return RedirectToAction(nameof(Index));
 
@@ -121,21 +109,9 @@ namespace HelpDeskSystem.Controllers
                 systemCode.ModifiedById = UserId;
 
                 _context.Update(systemCode);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
 
-                //log The Audit Trails
-                var activity = new AuditTrail()
-                {
-                    Action = "Update",
-                    TimeStamp = DateTime.Now,
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    UserId = UserId,
-                    Module = "SystemCodes",
-                    AffectedTable = "SystemCode",
-                };
-
-                _context.Add(activity);
-                await _context.SaveChangesAsync();
+              
                 TempData["MESSEGE"] = "System Codes Updated Successfully";
             }
             catch (DbUpdateConcurrencyException)

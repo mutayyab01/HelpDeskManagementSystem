@@ -89,21 +89,9 @@ namespace HelpDeskSystem.Controllers
             ticketSubCategory.CategoryId = id;
 
             _context.Add(ticketSubCategory);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
 
-            //log The Audit Trails
-            var activity = new AuditTrail()
-            {
-                Action = "Create",
-                TimeStamp = DateTime.Now,
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                UserId = UserId,
-                Module = "Ticket Sub Category",
-                AffectedTable = "TicketSubCategories",
-            };
-
-            _context.Add(activity);
-            await _context.SaveChangesAsync();
+            
             
             TempData["MESSEGE"] = "Ticket Sub-Category Created Successfully";
 
