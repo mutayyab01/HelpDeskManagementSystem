@@ -24,6 +24,8 @@ namespace HelpDeskSystem.Data
         public DbSet<SystemTask> SystemTasks { get; set; }
         public DbSet<SystemSetting> SystemSettings { get; set; }
         public DbSet<UserRoleProfile> UserRoleProfiles { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Country> Countries { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -99,6 +101,13 @@ namespace HelpDeskSystem.Data
        .HasOne(c => c.Gender)
        .WithMany()
        .HasForeignKey(c => c.GenderId)
+       .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder.Entity<City>()
+       .HasOne(c => c.Country)
+       .WithMany()
+       .HasForeignKey(c => c.CountryId)
        .OnDelete(DeleteBehavior.Restrict);
         }
     }
