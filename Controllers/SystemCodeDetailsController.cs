@@ -162,13 +162,14 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var systemCodeDetail = await _context.SystemCodeDetails.FindAsync(id);
             if (systemCodeDetail != null)
             {
                 _context.SystemCodeDetails.Remove(systemCodeDetail);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
         }
 

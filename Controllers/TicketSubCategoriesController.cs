@@ -138,7 +138,7 @@ namespace HelpDeskSystem.Controllers
                 ticketSubCategory.ModifiedOn = DateTime.Now;
                 ticketSubCategory.ModifiedById = UserId;
                 _context.Update(ticketSubCategory);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(UserId);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -183,13 +183,14 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var ticketSubCategory = await _context.TicketSubCategories.FindAsync(id);
             if (ticketSubCategory != null)
             {
                 _context.TicketSubCategories.Remove(ticketSubCategory);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
         }
 

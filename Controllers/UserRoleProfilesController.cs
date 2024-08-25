@@ -74,7 +74,7 @@ namespace HelpDeskSystem.Controllers
             userRoleProfile.CreatedById = UserId;
 
             _context.Add(userRoleProfile);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
 
             ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Name", userRoleProfile.RoleId);
@@ -122,7 +122,7 @@ namespace HelpDeskSystem.Controllers
                 userRoleProfile.ModifiedById = UserId;
 
                 _context.Update(userRoleProfile);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -170,13 +170,14 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRoleProfile = await _context.UserRoleProfiles.FindAsync(id);
             if (userRoleProfile != null)
             {
                 _context.UserRoleProfiles.Remove(userRoleProfile);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
         }
 

@@ -626,8 +626,11 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
+                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
                 _context.Update(ticket);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
                 TempData["MESSEGE"] = "Ticket Updated Successfully";
 
             }
@@ -672,6 +675,7 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket != null)
             {
@@ -680,7 +684,7 @@ namespace HelpDeskSystem.Controllers
 
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
         }
 

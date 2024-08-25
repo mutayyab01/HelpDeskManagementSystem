@@ -62,11 +62,11 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketCategory ticketCategory)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ticketCategory.CreatedOn = DateTime.Now;
-            ticketCategory.CreatedById = userId;
+            ticketCategory.CreatedById = UserId;
             _context.Add(ticketCategory);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync(UserId);
             TempData["MESSEGE"] = "Ticket Category Created Successfully";
 
             return RedirectToAction(nameof(Index));
@@ -106,11 +106,11 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 ticketCategory.ModifiedOn = DateTime.Now;
-                ticketCategory.ModifiedById = userId;
+                ticketCategory.ModifiedById = UserId;
                 _context.Update(ticketCategory);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
                 TempData["MESSEGE"] = "Ticket Category Updated Successfully";
 
             }
@@ -154,13 +154,14 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var ticketCategory = await _context.TicketCategories.FindAsync(id);
             if (ticketCategory != null)
             {
                 _context.TicketCategories.Remove(ticketCategory);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             TempData["MESSEGE"] = "Ticket Category Deleted Successfully";
 
             return RedirectToAction(nameof(Index));

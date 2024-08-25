@@ -120,6 +120,7 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
+
                 _context.Update(comment);
                 await _context.SaveChangesAsync();
                 TempData["MESSEGE"] = "Ticket Comment Updated Successfully";
@@ -168,13 +169,14 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var comment = await _context.Comments.FindAsync(id);
             if (comment != null)
             {
                 _context.Comments.Remove(comment);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             TempData["MESSEGE"] = "Ticket Comment Deleted Successfully";
             return RedirectToAction(nameof(Index));
 

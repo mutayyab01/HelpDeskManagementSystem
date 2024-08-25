@@ -116,7 +116,7 @@ namespace HelpDeskSystem.Controllers
                 systemSetting.ModifiedById = UserId;
 
                 _context.Update(systemSetting);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -161,13 +161,14 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var systemSetting = await _context.SystemSettings.FindAsync(id);
             if (systemSetting != null)
             {
                 _context.SystemSettings.Remove(systemSetting);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(UserId);
             return RedirectToAction(nameof(Index));
         }
 
