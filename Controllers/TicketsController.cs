@@ -12,6 +12,7 @@ using HelpDeskSystem.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.Configuration;
 using HelpDeskSystem.Data.Migrations;
+using AutoMapper;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -20,12 +21,16 @@ namespace HelpDeskSystem.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public TicketsController(ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        public TicketsController(ApplicationDbContext context, 
+            IConfiguration configuration, IWebHostEnvironment webHostEnvironment
+            ,IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
             _webHostEnvironment = webHostEnvironment;
+            _mapper = mapper;
         }
 
         // GET: Tickets
@@ -496,17 +501,22 @@ namespace HelpDeskSystem.Controllers
             var pendingstatus = await _context.SystemCodeDetails.Include(x => x.SystemCode)
                 .Where(x => x.SystemCode.Code == "STATUS" && x.Code == "PENDING")
                 .FirstOrDefaultAsync();
+            Ticket ticketdetails = new();
+
+            var ticket = _mapper.Map(ticketVM, ticketdetails);
+
+            /*
             Ticket ticket = new();
             ticket.Id = ticketVM.Id;
             ticket.Title = ticketVM.Title;
             ticket.Description = ticketVM.Description;
-            ticket.StatusId = pendingstatus.Id;
             ticket.PriorityId = ticketVM.PriorityId;
             ticket.SubCategoryId = ticketVM.SubCategoryId;
             ticket.Attachment = ticketVM.Attachment;
+            */
 
 
-
+            ticket.StatusId = pendingstatus.Id;
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ticket.CreatedOn = DateTime.Now;
             ticket.CreatedById = UserId;
