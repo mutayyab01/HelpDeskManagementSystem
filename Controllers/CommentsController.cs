@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using System.Security.Claims;
+using HelpDeskSystem.Services;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -72,7 +73,7 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Comment comment)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             comment.CreatedOn = DateTime.Now;
             comment.CreatedById = UserId;
             _context.Add(comment);
@@ -120,9 +121,10 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
-
+                var UserId = User.GetUserId();
                 _context.Update(comment);
-                await _context.SaveChangesAsync();
+
+                await _context.SaveChangesAsync(UserId);
                 TempData["MESSEGE"] = "Ticket Comment Updated Successfully";
 
             }
@@ -169,7 +171,7 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             var comment = await _context.Comments.FindAsync(id);
             if (comment != null)
             {

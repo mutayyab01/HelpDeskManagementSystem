@@ -28,6 +28,7 @@ namespace HelpDeskSystem.Data
         public DbSet<UserRoleProfile> UserRoleProfiles { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
+        public DbSet<CitiesView> CitiesViews { get; set; }
 
         public virtual async Task<int> SaveChangesAsync(string userId = null)
         {
@@ -97,6 +98,9 @@ namespace HelpDeskSystem.Data
                 releationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
 
+            builder.Entity<CitiesView>().HasNoKey().ToTable(nameof(CitiesView),k=>k.ExcludeFromMigrations());
+
+
             builder.Entity<Ticket>()
                 .HasOne(c => c.CreatedBy)
                 .WithMany()
@@ -110,10 +114,10 @@ namespace HelpDeskSystem.Data
            .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TicketResolution>()
-        .HasOne(c => c.Ticket)
-        .WithMany()
-        .HasForeignKey(c => c.TicketId)
-        .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(c => c.Ticket)
+            .WithMany()
+            .HasForeignKey(c => c.TicketId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Comment>()
                 .HasOne(c => c.CreatedBy)

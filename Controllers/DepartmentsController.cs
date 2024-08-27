@@ -9,6 +9,7 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.Data.Migrations;
 using System.Security.Claims;
+using HelpDeskSystem.Services;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -64,12 +65,12 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Department department)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             department.CreatedOn = DateTime.Now;
-            department.CreatedById = userId;
+            department.CreatedById = UserId;
 
             _context.Add(department);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync(UserId);
             TempData["MESSEGE"] = "Department Created Successfully";
 
             return RedirectToAction(nameof(Index));
@@ -108,12 +109,12 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var UserId = User.GetUserId();
                 department.ModifiedOn = DateTime.Now;
-                department.ModifiedById = userId;
+                department.ModifiedById = UserId;
 
                 _context.Update(department);
-                await _context.SaveChangesAsync(userId);
+                await _context.SaveChangesAsync(UserId);
                 TempData["MESSEGE"] = "Department Updated Successfully";
 
             }
@@ -158,7 +159,7 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             var department = await _context.Departments.FindAsync(id);
             if (department != null)
             {

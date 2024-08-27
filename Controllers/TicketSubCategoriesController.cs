@@ -9,6 +9,7 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.ViewModels;
 using System.Security.Claims;
+using HelpDeskSystem.Services;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -79,9 +80,9 @@ namespace HelpDeskSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int id,TicketSubCategory ticketSubCategory)
+        public async Task<IActionResult> Create(int id, TicketSubCategory ticketSubCategory)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             ticketSubCategory.CreatedOn = DateTime.Now;
             ticketSubCategory.CreatedById = UserId;
 
@@ -91,11 +92,11 @@ namespace HelpDeskSystem.Controllers
             _context.Add(ticketSubCategory);
             await _context.SaveChangesAsync(UserId);
 
-            
-            
+
+
             TempData["MESSEGE"] = "Ticket Sub-Category Created Successfully";
 
-            return RedirectToAction("Index", new {id=id});
+            return RedirectToAction("Index", new { id = id });
 
             return View(ticketSubCategory);
         }
@@ -131,29 +132,29 @@ namespace HelpDeskSystem.Controllers
                 return NotFound();
             }
 
-           
-                try
-                {
-                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            try
+            {
+                var UserId = User.GetUserId();
                 ticketSubCategory.ModifiedOn = DateTime.Now;
                 ticketSubCategory.ModifiedById = UserId;
                 _context.Update(ticketSubCategory);
-                    await _context.SaveChangesAsync(UserId);
-                }
-                catch (DbUpdateConcurrencyException)
+                await _context.SaveChangesAsync(UserId);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TicketSubCategoryExists(ticketSubCategory.Id))
                 {
-                    if (!TicketSubCategoryExists(ticketSubCategory.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
-                return RedirectToAction(nameof(Index));
-            
-           
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+
             return View(ticketSubCategory);
         }
 
@@ -183,7 +184,7 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             var ticketSubCategory = await _context.TicketSubCategories.FindAsync(id);
             if (ticketSubCategory != null)
             {

@@ -1,6 +1,7 @@
 ﻿using HelpDeskSystem.Data;
 using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Models;
+using HelpDeskSystem.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,7 @@ namespace HelpDeskSystem.Controllers
             ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
             try
             {
-                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var UserId = User.GetUserId();
                 ApplicationUser Registereduser = new ApplicationUser();
                 Registereduser.Email = user.Email;
                 Registereduser.EmailConfirmed = user.EmailConfirmed;

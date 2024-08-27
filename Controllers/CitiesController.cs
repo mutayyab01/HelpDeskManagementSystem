@@ -9,6 +9,7 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using System.Diagnostics.Metrics;
 using System.Security.Claims;
+using HelpDeskSystem.Services;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -24,11 +25,8 @@ namespace HelpDeskSystem.Controllers
         // GET: Cities
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Cities
-                .Include(c => c.Country)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.ModifiedBy);
-            return View(await applicationDbContext.ToListAsync());
+            var cities = await _context.CitiesViews.ToListAsync();
+            return View(cities);
         }
 
         // GET: Cities/Details/5
@@ -56,7 +54,7 @@ namespace HelpDeskSystem.Controllers
         public IActionResult Create()
         {
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
-     
+
             return View();
         }
 
@@ -67,7 +65,7 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(City city)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             city.CreatedOn = DateTime.Now;
             city.CreatedById = UserId;
 
@@ -76,7 +74,7 @@ namespace HelpDeskSystem.Controllers
             return RedirectToAction(nameof(Index));
 
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", city.CountryId);
-         
+
             return View(city);
         }
 
@@ -94,7 +92,7 @@ namespace HelpDeskSystem.Controllers
                 return NotFound();
             }
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", city.CountryId);
-          
+
             return View(city);
         }
 
@@ -113,7 +111,7 @@ namespace HelpDeskSystem.Controllers
 
             try
             {
-                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var UserId = User.GetUserId();
                 city.ModifiedOn = DateTime.Now;
                 city.ModifiedById = UserId;
 
@@ -164,11 +162,10 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var UserId = "";
+            var UserId = User.GetUserId();
             var city = await _context.Cities.FindAsync(id);
             if (city != null)
             {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _context.Cities.Remove(city);
             }
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.City>
+﻿@model IEnumerable<HelpDeskSystem.Models.CitiesView>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,10 +18,10 @@
                         @Html.DisplayNameFor(model => model.PostalCode)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Name)
+                        @Html.DisplayNameFor(model => model.CityName)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Country)
+                        @Html.DisplayNameFor(model => model.CountryName)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.CreatedBy)
@@ -48,19 +48,19 @@
                             @Html.DisplayFor(modelItem => item.PostalCode)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Name)
+                            @Html.DisplayFor(modelItem => item.CityName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Country.Name)
+                            @Html.DisplayFor(modelItem => item.CountryName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.CreatedBy.FullName)
+                            @Html.DisplayFor(modelItem => item.CreatedBy)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedOn)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.ModifiedBy.FullName)
+                            @Html.DisplayFor(modelItem => item.ModifiedBy)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.ModifiedOn)
