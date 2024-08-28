@@ -9,6 +9,8 @@ namespace HelpDeskSystem.ViewModels
         public ICollection<SystemTask> SystemTasks { get; set;}
         public ICollection<IdentityRole> SystemRoles { get; set;}
         public ICollection<int> RightIdsAssigned { get; set;}
+        public int[] Ids { get; set;}
+
         [DisplayName("Role Name")]
         public string RoleId { get; set; }
         [DisplayName("System Task")]

@@ -28,7 +28,7 @@ namespace HelpDeskSystem.Controllers
         }
         public async Task<IActionResult> Create()
         {
-        
+
             return View();
         }
         [HttpPost]
@@ -37,14 +37,15 @@ namespace HelpDeskSystem.Controllers
         {
             IdentityRole role = new();
             role.Name = VM.RoleName;
-            var result =await _roleManager.CreateAsync(role);
+            var result = await _roleManager.CreateAsync(role);
             if (result.Succeeded)
             {
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
 
             }
             else
             {
+                TempData["ERROR"] = result.Errors.FirstOrDefault()?.Description ?? "An unknown error occurred.";
                 return View(VM);
             }
         }

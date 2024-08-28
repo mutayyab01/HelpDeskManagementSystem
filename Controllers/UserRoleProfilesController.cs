@@ -59,9 +59,10 @@ namespace HelpDeskSystem.Controllers
         public async Task<IActionResult> UserRights(string id)
         {
             ProfileViewModel VM = new();
+            VM.RoleId = id;
 
             var allroles = await _context.Roles.OrderBy(x => x.Name).ToListAsync();
-            ViewData["RoleId"] = new SelectList(allroles, "Id", "Name",id);
+            ViewData["RoleId"] = new SelectList(allroles, "Id", "Name", id);
 
             VM.SystemTasks = await _context.SystemTasks
                 .Include(x => x.Parent)
@@ -71,11 +72,60 @@ namespace HelpDeskSystem.Controllers
                 .ToListAsync();
 
             VM.RightIdsAssigned = await _context.UserRoleProfiles
-                .Where(x => x.RoleId == id).Select(x=>x.TaskId)
+                .Where(x => x.RoleId == id).Select(x => x.TaskId)
                 .ToListAsync();
 
             return View(VM);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UserRights(ProfileViewModel VM)
+        {
+            try
+            {
+                var allprofiles = _context.UserRoleProfiles.Where(x => x.RoleId == VM.RoleId).ToList();
+                _context.UserRoleProfiles.RemoveRange(allprofiles);
+                foreach (var TaskId in VM.Ids)
+                {
+                    var rightprofile = new UserRoleProfile
+                    {
+                        TaskId = TaskId,
+                        RoleId = VM.RoleId,
+                        CreatedOn = DateTime.Now,
+                        CreatedById = User.GetUserId()
+                    };
+                    _context.UserRoleProfiles.Add(rightprofile);
+                    TempData["MESSEGE"] = "Role Right Assigned Successfully";
+
+                }
+                await _context.SaveChangesAsync(User.GetUserId());
+
+            }
+            catch (Exception ex)
+            {
+                TempData["ERROR"] = "There Was an Issue Assigning Right to the Role" + ex.Message;
+                throw;
+            }
+
+
+            var allroles = await _context.Roles.OrderBy(x => x.Name).ToListAsync();
+            ViewData["RoleId"] = new SelectList(allroles, "Id", "Name", VM.RoleId);
+
+            VM.SystemTasks = await _context.SystemTasks
+                .Include(x => x.Parent)
+                .Include("ChildTasks.ChildTasks.ChildTasks")
+                .OrderBy(x => x.OrderNo)
+                .Where(x => x.Parent == null)
+                .ToListAsync();
+
+            VM.RightIdsAssigned = await _context.UserRoleProfiles
+                .Where(x => x.RoleId == VM.RoleId).Select(x => x.TaskId)
+                .ToListAsync();
+
+            return View(VM);
+        }
+
+
 
         // GET: UserRoleProfiles/Create
         public IActionResult Create()
