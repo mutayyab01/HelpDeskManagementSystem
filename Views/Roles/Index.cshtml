@@ -21,6 +21,7 @@
                     <th>
                         Role Name
                     </th>
+                    <th>Rights</th>
                     <th>Edit</th>
                     <th>View</th>
                     <th>Delete</th>
@@ -36,7 +37,9 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Name)
                         </td>
-
+                        <td>
+                            <a asp-action="UserRights" asp-controller="UserRoleProfiles" asp-route-id="@item.Id" class="btn btn-secondary">Assign Rights</a>
+                        </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
                         </td>

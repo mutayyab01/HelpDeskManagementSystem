@@ -9,6 +9,7 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using System.Security.Claims;
 using HelpDeskSystem.Services;
+using HelpDeskSystem.ViewModels;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -51,6 +52,29 @@ namespace HelpDeskSystem.Controllers
             }
 
             return View(userRoleProfile);
+        }
+
+
+
+        public async Task<IActionResult> UserRights(string id)
+        {
+            ProfileViewModel VM = new();
+
+            var allroles = await _context.Roles.OrderBy(x => x.Name).ToListAsync();
+            ViewData["RoleId"] = new SelectList(allroles, "Id", "Name",id);
+
+            VM.SystemTasks = await _context.SystemTasks
+                .Include(x => x.Parent)
+                .Include("ChildTasks.ChildTasks.ChildTasks")
+                .OrderBy(x => x.OrderNo)
+                .Where(x => x.Parent == null)
+                .ToListAsync();
+
+            VM.RightIdsAssigned = await _context.UserRoleProfiles
+                .Where(x => x.RoleId == id).Select(x=>x.TaskId)
+                .ToListAsync();
+
+            return View(VM);
         }
 
         // GET: UserRoleProfiles/Create
