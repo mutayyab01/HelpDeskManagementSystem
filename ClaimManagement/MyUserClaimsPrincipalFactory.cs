@@ -12,7 +12,7 @@ namespace HelpDeskSystem.ClaimManagement
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-        public MyUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager, 
+        public MyUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ApplicationDbContext context,
             IOptions<IdentityOptions> options) : base(userManager, roleManager, options)
@@ -22,9 +22,31 @@ namespace HelpDeskSystem.ClaimManagement
 
         }
 
-        protected override Task<ClaimsIdentity> GenerateClaimsAsync(ApplicationUser user)
+        protected override async Task<ClaimsIdentity> GenerateClaimsAsync(ApplicationUser user)
         {
-            return base.GenerateClaimsAsync(user);
+            var identity = await base.GenerateClaimsAsync(user);
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var userrole = userRoles.FirstOrDefault();
+            var allUserPremission = "";
+
+            if (userrole != null)
+            {
+                var userRoleId = await _context.Roles.SingleAsync(i => i.Name == userrole);
+                var userPremission = await _context.UserRoleProfiles.Where(x => x.RoleId == userRoleId.Id)
+                    .Select(p => p.Task.Parent.Name + ":" + p.Task.Name).ToListAsync();
+
+                foreach (var premission in userPremission)
+                {
+                    allUserPremission += $"@{premission}";
+                }
+
+            }
+            identity.AddClaim(new Claim("UserPermission", allUserPremission));
+
+            return identity;
+
         }
     }
 }

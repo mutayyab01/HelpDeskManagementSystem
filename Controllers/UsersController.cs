@@ -29,8 +29,8 @@ namespace HelpDeskSystem.Controllers
         public async Task<ActionResult> Index()
         {
             var users = await _context.Users
-                .Include(x=>x.Role)
-                .Include(x=>x.Gender)
+                .Include(x => x.Role)
+                .Include(x => x.Gender)
                 .ToListAsync();
             return View(users);
         }
@@ -44,7 +44,7 @@ namespace HelpDeskSystem.Controllers
         // GET: UsersController/Create
         public ActionResult Create()
         {
-            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x=>x.SystemCode).Where(x=>x.SystemCode.Code=="GENDER"), "Id", "Code");
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code");
             ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
 
             return View();
@@ -55,10 +55,12 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ApplicationUser user)
         {
-            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code");
-            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code",user.GenderId);
+            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name",user.RoleId);
             try
             {
+                var rolename =await _context.Roles.Where(x => x.Id == user.RoleId).FirstOrDefaultAsync();
+
                 var UserId = User.GetUserId();
                 ApplicationUser Registereduser = new ApplicationUser();
                 Registereduser.Email = user.Email;
@@ -77,14 +79,14 @@ namespace HelpDeskSystem.Controllers
                 var result = await _userManager.CreateAsync(Registereduser, user.PasswordHash);
                 if (result.Succeeded)
                 {
-                   
+                    await _userManager.AddToRoleAsync(Registereduser, rolename.Name);
                     TempData["MESSEGE"] = "System User Created Successfully";
                     return RedirectToAction(nameof(Index));
 
                 }
                 else
                 {
-
+                    TempData["ERROR"] = result.Errors.FirstOrDefault()?.Description ?? "An unknown error occurred.";
                     return View();
                 }
             }

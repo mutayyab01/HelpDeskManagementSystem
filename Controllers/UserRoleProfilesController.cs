@@ -104,7 +104,7 @@ namespace HelpDeskSystem.Controllers
             catch (Exception ex)
             {
                 TempData["ERROR"] = "There Was an Issue Assigning Right to the Role" + ex.Message;
-                throw;
+               
             }
 
 
