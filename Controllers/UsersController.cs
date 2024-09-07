@@ -1,4 +1,5 @@
-﻿using HelpDeskSystem.Data;
+﻿using HelpDeskSystem.ClaimManagement;
+using HelpDeskSystem.Data;
 using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.Services;

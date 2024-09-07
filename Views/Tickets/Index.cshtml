@@ -1,6 +1,11 @@
 ﻿@model HelpDeskSystem.ViewModels.TicketViewModel
 @{
     ViewData["Title"] = "Index";
+    var alluserpermission = User.FindFirst("UserPermission")?.Value ?? "";
+
+    // Ticket permission
+    var canCreateTicket = alluserpermission.Contains("|TICKETS:CREATE");
+    var canViewTicket = alluserpermission.Contains("|TICKETS:VIEW");
 }
 <div class="card rounded-4">
     <form id="myForm" asp-action="Index" method="post">
@@ -64,9 +69,12 @@
         <div class="d-flex align-items-center">
             <h6 class="mb-0">Recent Tickets</h6>
         </div>
-        <p>
-            <a asp-action="Create" class="btn btn-primary">Add New Ticket</a>
-        </p>
+        @if (canCreateTicket)
+        {
+            <p>
+                <a asp-action="Create" class="btn btn-primary">Add New Ticket</a>
+            </p>
+        }
         <table id="example" class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
             <thead>
                 <tr>
@@ -259,3 +267,4 @@
     });
 
 </script>
+

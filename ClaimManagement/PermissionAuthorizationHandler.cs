@@ -10,33 +10,34 @@ namespace HelpDeskSystem.ClaimManagement
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement)
         {
-            var attributes = new List<PermissionAttribute>();
-            var action = (context.Resource as Endpoint)?.Metadata.ToList();
-            if (action != null)
-            {
-                var perm = (PermissionAttribute)action.FirstOrDefault(i => i.GetType().FullName == "PermissionAttribute");
-            }
+            // Retrieve the attributes associated with the current endpoint
+            var attributes=GetAttributesFromEndpoint(context.Resource);
+
             return HandleRequirementAsync(context, requirement, attributes);
+
         }
-        //private readonly IHttpContextAccessor _contextAccessor;
+       
+        protected abstract Task HandleRequirementAsync(
+            AuthorizationHandlerContext context, 
+            TRequirement requirement, 
+            IEnumerable<TAttribute> attributes);
 
-        //public AttributeAuthorizationHandler(IHttpContextAccessor contextAccessor)
-        //{
-        //    _contextAccessor = contextAccessor;
-        //}
-        protected abstract Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement, IEnumerable<PermissionAttribute> attributes);
-
-        private static IEnumerable<TAttribute> GetAttributes(MemberInfo memberInfo)
+        private static IEnumerable<TAttribute> GetAttributesFromEndpoint(object resource)
         {
-            return memberInfo.GetCustomAttributes(typeof(TAttribute), false).Cast<TAttribute>();
+            var endpoint = resource as Endpoint;
+            if (endpoint!=null)
+            {
+                return endpoint.Metadata.OfType<TAttribute>().ToList();
 
+            }
+            return Enumerable.Empty<TAttribute>();
         }
     }
 
 
     public class PermissionAuthorizationRequirement : IAuthorizationRequirement
     {
-        // Add any Custom requirement
+        // Add any Custom requirement properties or method if needed
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
@@ -53,34 +54,34 @@ namespace HelpDeskSystem.ClaimManagement
     {
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionAuthorizationRequirement requirement, IEnumerable<PermissionAttribute> attributes)
         {
+            if (attributes==null||!attributes.Any())
+            {
+                context.Fail();
+                return;
+            }
+
+
             foreach (var permissionattribute in attributes)
             {
-                if (!await AuthorizeAsync(context.User, permissionattribute.Name))
+                var hasPermission = await AuthorizeAsync(context.User, permissionattribute.Name);
+                if (!hasPermission)
                 {
+                    context.Fail();
                     return;
                 }
+
             }
 
             context.Succeed(requirement);
         }
         private Task<bool> AuthorizeAsync(ClaimsPrincipal user, string permission)
         {
-            var userProfile = user.FindFirstValue("UserPermission")?.ToLower();
-            if (string.IsNullOrEmpty(userProfile))
-                return Task.FromResult(false);
-            try
-            {
-                if (userProfile.Contains(permission.ToLower()))
-                {
-                    return Task.FromResult(true);
-                }
-            }
-            catch (Exception e)
-            {
-                return Task.FromResult(false);
+            var userPermissions = user.FindFirstValue("UserPermission")?.ToLower();
+            // Check for permission in user's claims
 
-            }
-            return Task.FromResult(false);
+            var haspermission = Task.FromResult(userPermissions != null && userPermissions.Contains(permission.ToLower()));
+            
+            return haspermission;
         }
     }
 

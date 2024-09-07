@@ -1,8 +1,10 @@
 ﻿using HelpDeskSystem.Data;
+using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Security;
 using System.Security.Claims;
 
 namespace HelpDeskSystem.ClaimManagement
@@ -26,25 +28,35 @@ namespace HelpDeskSystem.ClaimManagement
         {
             var identity = await base.GenerateClaimsAsync(user);
 
+            // Get Roles
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            var userrole = userRoles.FirstOrDefault();
-            var allUserPremission = "";
-
-            if (userrole != null)
+            if (userRoles.Any())
             {
-                var userRoleId = await _context.Roles.SingleAsync(i => i.Name == userrole);
-                var userPremission = await _context.UserRoleProfiles.Where(x => x.RoleId == userRoleId.Id)
-                    .Select(p => p.Task.Parent.Name + ":" + p.Task.Name).ToListAsync();
+                var userRole = userRoles.First();
 
-                foreach (var premission in userPremission)
+                // Find the role from the context
+                var role = await _context.Roles.SingleOrDefaultAsync(r => r.Name == userRole);
+                if (role != null)
                 {
-                    allUserPremission += $"@{premission}";
+                    // Get permission from the role
+
+                    var Premissions = await _context.UserRoleProfiles
+                        .Where(urp => urp.RoleId == role.Id)
+                    .Select(urp => $"{urp.Task.Parent.Name}:{urp.Task.Name}")
+                    .ToListAsync();
+
+                    var allUserPermissions = "";
+
+                    foreach ( var right in Premissions )
+                    {
+                        allUserPermissions += $"|{right?.ToUpper()}";
+                    }
+
+                    // Add permission Claim
+                    identity.AddClaim(new Claim("UserPermission", allUserPermissions));
                 }
-
             }
-            identity.AddClaim(new Claim("UserPermission", allUserPremission));
-
             return identity;
 
         }
