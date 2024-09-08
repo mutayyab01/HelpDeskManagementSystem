@@ -43,7 +43,7 @@ namespace HelpDeskSystem.ClaimManagement
 
                     var Premissions = await _context.UserRoleProfiles
                         .Where(urp => urp.RoleId == role.Id)
-                    .Select(urp => $"{urp.Task.Parent.Name}:{urp.Task.Name}")
+                    .Select(urp => $"{urp.Task.Parent.Code}:{urp.Task.Name}")
                     .ToListAsync();
 
                     var allUserPermissions = "";
