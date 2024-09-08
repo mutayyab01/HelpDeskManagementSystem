@@ -1,5 +1,6 @@
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
+using HelpDeskSystem.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ namespace HelpDeskSystem.Controllers
 
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(TicketDashboardViewModel VM)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -25,9 +26,10 @@ namespace HelpDeskSystem.Controllers
             }
             else
             {
-              //  var alluserpermission = User.FindFirst(c => c.Type == "UserPermission")?.Value ?? "";
+                //  var alluserpermission = User.FindFirst(c => c.Type == "UserPermission")?.Value ?? "";
+               VM.TicketsSummary = await _context.TicketsSummaryView.FirstOrDefaultAsync();
 
-                var tickets = await _context.Tickets
+                VM.Tickets = await _context.Tickets
                 .Include(t => t.CreatedBy)
                 .Include(t => t.SubCategory)
                 .Include(t => t.Priority)
@@ -36,7 +38,7 @@ namespace HelpDeskSystem.Controllers
                 .OrderBy(x => x.CreatedOn)
                 .ToListAsync();
 
-                return View(tickets);
+                return View(VM);
             }
         }
 

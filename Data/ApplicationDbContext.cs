@@ -29,6 +29,7 @@ namespace HelpDeskSystem.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<CitiesView> CitiesViews { get; set; }
+        public DbSet<TicketsSummaryView> TicketsSummaryView { get; set; }
 
         public virtual async Task<int> SaveChangesAsync(string userId = null)
         {
@@ -99,8 +100,9 @@ namespace HelpDeskSystem.Data
             }
 
             builder.Entity<CitiesView>().HasNoKey().ToTable(nameof(CitiesView),k=>k.ExcludeFromMigrations());
+            builder.Entity<TicketsSummaryView>().HasNoKey().ToTable(nameof(TicketsSummaryView),k=>k.ExcludeFromMigrations());
 
-
+            
             builder.Entity<Ticket>()
                 .HasOne(c => c.CreatedBy)
                 .WithMany()

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.Ticket>
+﻿@model HelpDeskSystem.ViewModels.TicketDashboardViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -9,11 +9,11 @@
                 <div class="d-flex align-items-stretch justify-content-between rounded-5 overflow">
                     <div class="w-50 p-3">
                         <p class="text-white">Total Tickets</p>
-                        <h4 class="text-white">8,542</h4>
+                        <h4 class="text-white">@Model.TicketsSummary.TotalTickets</h4>
                     </div>
                     <div class="w-50 p-3">
-                        <p class="mb-3 text-white text-end">+ 16% <i class="bi bi-arrow-up"></i></p>
-                        <div id="chart1"></div>
+                        <p class="mb-3 text-white text-end">+ @Model.TicketsSummary.TotalTickets% <i class="bi bi-arrow-up"></i></p>
+                        <div id=""></div>
                     </div>
                 </div>
             </div>
@@ -24,11 +24,11 @@
             <div class="card-body p-2">
                 <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow-hidden">
                     <div class="w-50 p-3">
-                        <p class="text-white">Urgents Tickets</p>
-                        <h4 class="text-white">12.5M</h4>
+                        <p class="text-white">Assigned Tickets</p>
+                        <h4 class="text-white">@Model.TicketsSummary.AssignedTickets</h4>
                     </div>
                     <div class="w-50 p-3">
-                        <p class="mb-3 text-white text-end">- 3.4% <i class="bi bi-arrow-down"></i></p>
+                        <p class="mb-3 text-white text-end">@Model.TicketsSummary.AssignedTickets% <i class="bi bi-arrow-down"></i></p>
                         <div id=""></div>
                     </div>
                 </div>
@@ -40,11 +40,11 @@
             <div class="card-body p-2">
                 <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow">
                     <div class="w-50 p-3">
-                        <p class="text-white">Closed Tickets</p>
-                        <h4 class="text-white">$64.5k</h4>
+                        <p class="text-white">Resolved Tickets</p>
+                        <h4 class="text-white">@Model.TicketsSummary.ResolvedTickets</h4>
                     </div>
                     <div class="w-50 p-3">
-                        <p class="mb-3 text-white text-end">+ 24% <i class="bi bi-arrow-up"></i></p>
+                        <p class="mb-3 text-white text-end">@Model.TicketsSummary.ResolvedTickets% <i class="bi bi-arrow-up"></i></p>
                         <div id=""></div>
                     </div>
                 </div>
@@ -56,11 +56,11 @@
             <div class="card-body p-2">
                 <div class="d-flex align-items-stretch justify-content-between rounded-4 overflow">
                     <div class="w-50 p-3">
-                        <p class="text-white">Escalated Tickets</p>
-                        <h4 class="text-white">25.8k</h4>
+                        <p class="text-white">Closed Tickets</p>
+                        <h4 class="text-white">@Model.TicketsSummary.ClosedTickets</h4>
                     </div>
                     <div class="w-50 p-3">
-                        <p class="mb-3 text-white text-end">+ 8.2% <i class="bi bi-arrow-up"></i></p>
+                        <p class="mb-3 text-white text-end">@Model.TicketsSummary.ClosedTickets% <i class="bi bi-arrow-up"></i></p>
                         <div id=""></div>
                     </div>
                 </div>
@@ -115,25 +115,25 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.Id)
+                            @Html.DisplayNameFor(model => model.Ticket.Id)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Title)
+                            @Html.DisplayNameFor(model => model.Ticket.Title)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Description)
+                            @Html.DisplayNameFor(model => model.Ticket.Description)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Priority)
+                            @Html.DisplayNameFor(model => model.Ticket.Priority)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.CreatedBy)
+                            @Html.DisplayNameFor(model => model.Ticket.CreatedBy)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.CreatedOn)
+                            @Html.DisplayNameFor(model => model.Ticket.CreatedOn)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Status)
+                            @Html.DisplayNameFor(model => model.Ticket.Status)
                         </th>
                         <th>No Of Comments</th>
                         <th>Comments</th>
@@ -142,7 +142,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Tickets)
                     {
                         var colorcode = "#00ffbf";
                         if (item.Status.Code == "Resolved")
@@ -231,7 +231,7 @@
             }
         },
         title: {
-            text: 'Number of Tickets Per Category',
+            text: 'Number of Tickets Per Status',
             align: 'left'
         },
         accessibility: {
@@ -257,17 +257,11 @@
             type: 'pie',
             name: 'Share',
             data: [
-                ['Samsung', 23],
-                ['Apple', 18],
-                {
-                    name: 'Xiaomi',
-                    y: 12,
-                    sliced: true,
-                    selected: true
-                },
-                ['Oppo*', 9],
-                ['Vivo', 8],
-                ['Others', 30]
+                ['AssignedTickets', @Model.TicketsSummary.AssignedTickets],
+                ['ClosedTickets', @Model.TicketsSummary.ClosedTickets],
+                ['ResolvedTickets', @Model.TicketsSummary.ResolvedTickets],
+                ['PendingTickets', @Model.TicketsSummary.PendingTickets],
+                ['Re-OpenedTickets', @Model.TicketsSummary.ReOpenedTickets]
             ]
         }]
     });
@@ -279,7 +273,7 @@
         },
         title: {
             align: 'left',
-            text: 'Number of Tickets Per Category '
+            text: 'Number of Tickets Per Status '
         },
         accessibility: {
             announceNewData: {
@@ -291,7 +285,7 @@
         },
         yAxis: {
             title: {
-                text: 'Total percent market share'
+                text: 'Total percent Ticket Status'
             }
 
         },
@@ -316,44 +310,39 @@
 
         series: [
             {
-                name: 'Browsers',
+                name: 'Tickets',
                 colorByPoint: true,
                 data: [
                     {
-                        name: 'Chrome',
-                        y: 63.06,
-                        drilldown: 'Chrome'
+                        name: 'Assigned',
+                        y: @Model.TicketsSummary.AssignedTickets,
+                        drilldown: 'Assigned'
                     },
                     {
-                        name: 'Safari',
-                        y: 19.84,
-                        drilldown: 'Safari'
+                        name: 'Closed',
+                        y: @Model.TicketsSummary.ClosedTickets,
+                        drilldown: 'Closed'
                     },
                     {
-                        name: 'Firefox',
-                        y: 4.18,
-                        drilldown: 'Firefox'
+                        name: 'Pending',
+                        y: @Model.TicketsSummary.PendingTickets,
+                        drilldown: 'Pending'
                     },
                     {
-                        name: 'Edge',
-                        y: 4.12,
-                        drilldown: 'Edge'
+                        name: 'Resolved',
+                        y: @Model.TicketsSummary.ResolvedTickets,
+                        drilldown: 'Resolved'
                     },
                     {
-                        name: 'Opera',
-                        y: 2.33,
-                        drilldown: 'Opera'
+                        name: 'Re-Opened',
+                        y: @Model.TicketsSummary.ReOpenedTickets,
+                        drilldown: 'Re-Opened'
                     },
                     {
-                        name: 'Internet Explorer',
-                        y: 0.45,
-                        drilldown: 'Internet Explorer'
+                        name: 'Escalated',
+                        y: @Model.TicketsSummary.EscalatedTickets,
+                        drilldown: 'Escalated'
                     },
-                    {
-                        name: 'Other',
-                        y: 1.582,
-                        drilldown: null
-                    }
                 ]
             }
         ],
