@@ -231,7 +231,7 @@
             }
         },
         title: {
-            text: 'Number of Tickets Per Status',
+            text: 'Number of Tickets Per Status PieChart',
             align: 'left'
         },
         accessibility: {
@@ -273,7 +273,7 @@
         },
         title: {
             align: 'left',
-            text: 'Number of Tickets Per Status '
+            text: 'Number of Tickets Per Status BarGraph'
         },
         accessibility: {
             announceNewData: {
@@ -573,86 +573,74 @@
         }
     });
     Highcharts.chart('container3', {
-
-        title: {
-            text: 'Number Of Tickets Per Sub-Category',
-            align: 'left'
+        chart: {
+            type: 'column'
         },
-
+        title: {
+            align: 'left',
+            text: 'Number of Tickets Per Priority'
+        },
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            type: 'category'
+        },
         yAxis: {
             title: {
-                text: 'Number of Employees'
+                text: 'Total Tickets Priority'
             }
-        },
 
-        xAxis: {
-            accessibility: {
-                rangeDescription: 'Range: 2010 to 2022'
-            }
         },
-
         legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
+            enabled: false
         },
-
         plotOptions: {
             series: {
-                label: {
-                    connectorAllowed: false
-                },
-                pointStart: 2010
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}%'
+                }
             }
         },
 
-        series: [{
-            name: 'Installation & Developers',
-            data: [
-                43934, 48656, 65165, 81827, 112143, 142383,
-                171533, 165174, 155157, 161454, 154610, 168960, 171558
-            ]
-        }, {
-            name: 'Manufacturing',
-            data: [
-                24916, 37941, 29742, 29851, 32490, 30282,
-                38121, 36885, 33726, 34243, 31050, 33099, 33473
-            ]
-        }, {
-            name: 'Sales & Distribution',
-            data: [
-                11744, 30000, 16005, 19771, 20185, 24377,
-                32147, 30912, 29243, 29213, 25663, 28978, 30618
-            ]
-        }, {
-            name: 'Operations & Maintenance',
-            data: [
-                null, null, null, null, null, null, null,
-                null, 11164, 11218, 10077, 12530, 16585
-            ]
-        }, {
-            name: 'Other',
-            data: [
-                21908, 5548, 8105, 11248, 8989, 11816, 18274,
-                17300, 13053, 11906, 10073, 11471, 11648
-            ]
-        }],
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+                '<b>{point.y:.2f}%</b> of total<br/>'
+        },
 
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
-                }
-            }]
-        }
-
+        series: [
+            {
+                name: 'Tickets',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: 'Medium',
+                        y: @Model.TicketsPriority.MediumTickets,
+                        drilldown: 'Medium'
+                    },
+                    {
+                        name: 'Urgent',
+                        y: @Model.TicketsPriority.UrgentTickets,
+                        drilldown: 'Urgent'
+                    },
+                    {
+                        name: 'Very Urgent',
+                        y: @Model.TicketsPriority.VeryUrgentTickets,
+                        drilldown: 'Very Urgent'
+                    },
+                    {
+                        name: 'Resolved',
+                        y: @Model.TicketsSummary.ResolvedTickets,
+                        drilldown: 'Resolved'
+                    },
+                ]
+            }
+        ]
     });
 
     Highcharts.chart('container4', {
@@ -663,7 +651,7 @@
             type: 'pie'
         },
         title: {
-            text: 'total number Of Tickets Per Status',
+            text: 'Total Number Of Tickets Per Priority',
             align: 'left'
         },
         tooltip: {
@@ -685,28 +673,19 @@
             }
         },
         series: [{
-            name: 'Brands',
+            name: 'Priority',
             colorByPoint: true,
             data: [{
-                name: 'Chrome',
-                y: 74.77,
+                name: 'Medium',
+                y: @Model.TicketsPriority.MediumTickets,
                 sliced: true,
                 selected: true
             }, {
-                name: 'Edge',
-                y: 12.82
+                name: 'Urgent',
+                y: @Model.TicketsPriority.UrgentTickets
             }, {
-                name: 'Firefox',
-                y: 4.63
-            }, {
-                name: 'Safari',
-                y: 2.44
-            }, {
-                name: 'Internet Explorer',
-                y: 2.02
-            }, {
-                name: 'Other',
-                y: 3.28
+                name: 'Very Urgent',
+                y: @Model.TicketsPriority.VeryUrgentTickets
             }]
         }]
     });

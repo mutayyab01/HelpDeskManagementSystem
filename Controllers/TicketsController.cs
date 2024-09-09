@@ -14,6 +14,7 @@ using System.Configuration;
 using HelpDeskSystem.Data.Migrations;
 using AutoMapper;
 using HelpDeskSystem.Services;
+using ElmahCore;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -309,33 +310,43 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignedConfirmed(int id, TicketViewModel VM)
         {
-            var reassignedstatus = await _context.SystemCodeDetails
-                .Include(x => x.SystemCode)
-                .Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS" && x.Code == "Assigned")
-                .FirstOrDefaultAsync();
+            try
+            {
+                var reassignedstatus = await _context.SystemCodeDetails
+                        .Include(x => x.SystemCode)
+                        .Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS" && x.Code == "Assigned")
+                        .FirstOrDefaultAsync();
 
-            var UserId = User.GetUserId();
-            TicketResolution resolution = new();
-            resolution.TicketId = id;
-            resolution.StatusId = reassignedstatus.Id;
-            resolution.CreatedOn = DateTime.Now;
-            resolution.CreatedById = UserId;
-            resolution.Description = "Ticket Assigned";
-            _context.Add(resolution);
+                var UserId = User.GetUserId();
+                TicketResolution resolution = new();
+                resolution.TicketId = id;
+                resolution.StatusId = reassignedstatus.Id;
+                resolution.CreatedOn = DateTime.Now;
+                resolution.CreatedById = UserId;
+                resolution.Description = "Ticket Assigned";
+                _context.Add(resolution);
 
-            var ticket = await _context.Tickets
-                .Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
-            ticket.StatusId = reassignedstatus.Id;
-            ticket.AssignedToId = VM.AssignedToId;
-            ticket.AssignedOn = DateTime.Now;
-            _context.Update(ticket);
+                var ticket = await _context.Tickets
+                    .Where(x => x.Id == id)
+                    .FirstOrDefaultAsync();
+                ticket.StatusId = reassignedstatus.Id;
+                ticket.AssignedToId = VM.AssignedToId;
+                ticket.AssignedOn = DateTime.Now;
+                _context.Update(ticket);
 
-            await _context.SaveChangesAsync(UserId);
-          
-            TempData["MESSEGE"] = "Ticket Assigned Successfully";
+                await _context.SaveChangesAsync(UserId);
 
-            return RedirectToAction("Resolve", new { id = id });
+                TempData["MESSEGE"] = "Ticket Resolved Successfully";
+
+                return RedirectToAction("Resolve", new { id = id });
+            }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["ERROR"] = "Ticket Could not Resolved Successfully"+ex.Message;
+                return View(VM);
+
+            }
         }
 
 
@@ -465,87 +476,107 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketViewModel ticketVM, IFormFile accachmentFile)
         {
-            ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description", ticketVM.PriorityId);
-            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
-            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", ticketVM.CreatedById);
-            if (accachmentFile != null)
+            try
             {
-                var ext = Path.GetExtension(accachmentFile.FileName);
-                var size = accachmentFile.Length;
-                if (ext == ".png" || ext == ".jpeg" || ext == ".jpg" || ext == ".pdf" || ext == ".docx")
+                ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Priority"), "Id", "Description", ticketVM.PriorityId);
+                ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name");
+                ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName", ticketVM.CreatedById);
+                if (accachmentFile != null)
                 {
-                    if (size <= 1000000)//1Mb
+                    var ext = Path.GetExtension(accachmentFile.FileName);
+                    var size = accachmentFile.Length;
+                    if (ext == ".png" || ext == ".jpeg" || ext == ".jpg" || ext == ".pdf" || ext == ".docx")
                     {
-                        var filename = "Ticket_Attachment" + DateTime.Now.ToString("dd-MM-yyyy hh mm ss tt") + "_" + accachmentFile.FileName;
-                        //var path = _configuration["FileSettings:UploadFolder"]!;
-                        string folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TicketAttachment");
-                        var filepath = Path.Combine(folderPath, filename);
-                        var steam = new FileStream(filepath, FileMode.Create);
-                        await accachmentFile.CopyToAsync(steam);
-                        ticketVM.Attachment = filename;
+                        if (size <= 1000000)//1Mb
+                        {
+                            var filename = "Ticket_Attachment" + DateTime.Now.ToString("dd-MM-yyyy hh mm ss tt") + "_" + accachmentFile.FileName;
+                            //var path = _configuration["FileSettings:UploadFolder"]!;
+                            string folderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TicketAttachment");
+                            var filepath = Path.Combine(folderPath, filename);
+                            var steam = new FileStream(filepath, FileMode.Create);
+                            await accachmentFile.CopyToAsync(steam);
+                            ticketVM.Attachment = filename;
+                        }
+                        else
+                        {
+                            TempData["sizeError"] = "Document Must be less Than 1 Mb";
+                            return View(ticketVM);
+                        }
                     }
                     else
                     {
-                        TempData["sizeError"] = "Document Must be less Than 1 Mb";
+                        TempData["extError"] = "Only PNG,JPEG,JPG,PDF,DOCX Documents Are Allowed";
                         return View(ticketVM);
+
                     }
                 }
-                else
-                {
-                    TempData["extError"] = "Only PNG,JPEG,JPG,PDF,DOCX Documents Are Allowed";
-                    return View(ticketVM);
 
-                }
+
+                var pendingstatus = await _context.SystemCodeDetails.Include(x => x.SystemCode)
+                    .Where(x => x.SystemCode.Code == "STATUS" && x.Code == "PENDING")
+                    .FirstOrDefaultAsync();
+                Ticket ticketdetails = new();
+
+                var ticket = _mapper.Map(ticketVM, ticketdetails);
+
+                /*
+                Ticket ticket = new();
+                ticket.Id = ticketVM.Id;
+                ticket.Title = ticketVM.Title;
+                ticket.Description = ticketVM.Description;
+                ticket.PriorityId = ticketVM.PriorityId;
+                ticket.SubCategoryId = ticketVM.SubCategoryId;
+                ticket.Attachment = ticketVM.Attachment;
+                */
+
+
+                ticket.StatusId = pendingstatus.Id;
+                var UserId = User.GetUserId();
+                ticket.CreatedOn = DateTime.Now;
+                ticket.CreatedById = UserId;
+                _context.Add(ticket);
+                await _context.SaveChangesAsync(UserId);
+
+
+                TempData["MESSEGE"] = "Ticket Created Successfully";
+
+                return RedirectToAction(nameof(Index));
+                return View(ticket);
             }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["ERROR"] = "Ticket Couldn't Be Created "+ex.Message;
+                return View(ticketVM);
 
-
-            var pendingstatus = await _context.SystemCodeDetails.Include(x => x.SystemCode)
-                .Where(x => x.SystemCode.Code == "STATUS" && x.Code == "PENDING")
-                .FirstOrDefaultAsync();
-            Ticket ticketdetails = new();
-
-            var ticket = _mapper.Map(ticketVM, ticketdetails);
-
-            /*
-            Ticket ticket = new();
-            ticket.Id = ticketVM.Id;
-            ticket.Title = ticketVM.Title;
-            ticket.Description = ticketVM.Description;
-            ticket.PriorityId = ticketVM.PriorityId;
-            ticket.SubCategoryId = ticketVM.SubCategoryId;
-            ticket.Attachment = ticketVM.Attachment;
-            */
-
-
-            ticket.StatusId = pendingstatus.Id;
-            var UserId = User.GetUserId();
-            ticket.CreatedOn = DateTime.Now;
-            ticket.CreatedById = UserId;
-            _context.Add(ticket);
-            await _context.SaveChangesAsync(UserId);
-
-         
-            TempData["MESSEGE"] = "Ticket Created Successfully";
-
-            return RedirectToAction(nameof(Index));
-            return View(ticket);
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(int id, TicketViewModel VM)
         {
-            var UserId = User.GetUserId();
-            Comment comment = new();
-            comment.TicketId = id;
-            comment.CreatedOn = DateTime.Now;
-            comment.CreatedById = UserId;
-            comment.Description = VM.CommentsDescription;
-            _context.Add(comment);
-            await _context.SaveChangesAsync(UserId);
-        
-            TempData["MESSEGE"] = "Ticket Comment Created Successfully";
+            try
+            {
+                var UserId = User.GetUserId();
+                Comment comment = new();
+                comment.TicketId = id;
+                comment.CreatedOn = DateTime.Now;
+                comment.CreatedById = UserId;
+                comment.Description = VM.CommentsDescription;
+                _context.Add(comment);
+                await _context.SaveChangesAsync(UserId);
 
-            return RedirectToAction(nameof(Details), new { id = id });
+                TempData["MESSEGE"] = "Comment Details Created Successfully";
+
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["ERROR"] = "Comment Details Created Successfully";
+                return View(VM);
+
+            }
         }
 
         [HttpPost]

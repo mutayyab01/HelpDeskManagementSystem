@@ -4,8 +4,8 @@
     var alluserpermission = User.FindFirst("UserPermission")?.Value ?? "";
 
     // Ticket permission
-    var canCreateTicket = alluserpermission.Contains("|TICKETS:CREATE");
-    var canViewTicket = alluserpermission.Contains("|TICKETS:VIEW");
+    var canCreateTicket = alluserpermission.Contains("|TICKET:CREATE");
+    var canViewTicket = alluserpermission.Contains("|TICKET:VIEW");
 }
 <div class="card rounded-4">
     <form id="myForm" asp-action="Index" method="post">

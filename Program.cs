@@ -1,12 +1,17 @@
 using AutoMapper;
+using Elmah;
+using ElmahCore;
+using ElmahCore.Mvc;
 using HelpDeskSystem.ClaimManagement;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using XmlFileErrorLog = ElmahCore.XmlFileErrorLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,11 +88,29 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader();
     });
 });
+
+// Add SingleTon
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+builder.Services.AddElmah<XmlFileErrorLog>(options =>
+{
+    options.Path = "ErrorLogs/errors";
+    //options.OnPermissionCheck = context => context.User.Identity != null && context.User.Identity.IsAuthenticated;
+    options.LogPath = builder.Configuration["FileSettings:LogsFolder"];
+
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseMigrationsEndPoint();
+    app.UseElmahExceptionPage();
     app.UseMigrationsEndPoint();
 }
 else
@@ -99,7 +122,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCookiePolicy();  
+app.UseCookiePolicy();
+app.UseElmah();
 app.UseRouting();
 app.UseSession();
  

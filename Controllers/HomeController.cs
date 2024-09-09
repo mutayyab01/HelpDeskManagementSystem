@@ -28,6 +28,7 @@ namespace HelpDeskSystem.Controllers
             {
                 //  var alluserpermission = User.FindFirst(c => c.Type == "UserPermission")?.Value ?? "";
                VM.TicketsSummary = await _context.TicketsSummaryView.FirstOrDefaultAsync();
+               VM.TicketsPriority = await _context.TicketsPriorityView.FirstOrDefaultAsync();
 
                 VM.Tickets = await _context.Tickets
                 .Include(t => t.CreatedBy)
