@@ -58,6 +58,13 @@ builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, MyUserC
         options.Cookie.IsEssential = true;
     });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.LogoutPath = "/Identity/Account/Login";
+});
+
+
 
 var config = new MapperConfiguration(
     cfg =>

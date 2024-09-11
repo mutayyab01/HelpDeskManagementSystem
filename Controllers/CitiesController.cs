@@ -10,9 +10,13 @@ using HelpDeskSystem.Models;
 using System.Diagnostics.Metrics;
 using System.Security.Claims;
 using HelpDeskSystem.Services;
+using HelpDeskSystem.ClaimManagement;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
+    [Permission("CITIES:VIEW")]
     public class CitiesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,6 +27,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Cities
+        [Permission("CITIES:VIEW")]
         public async Task<IActionResult> Index()
         {
             var cities = await _context.CitiesViews.ToListAsync();

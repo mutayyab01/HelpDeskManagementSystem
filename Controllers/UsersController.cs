@@ -1,12 +1,15 @@
-﻿using HelpDeskSystem.ClaimManagement;
+﻿using ElmahCore;
+using HelpDeskSystem.ClaimManagement;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.Services;
+using HelpDeskSystem.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -56,11 +59,11 @@ namespace HelpDeskSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ApplicationUser user)
         {
-            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code",user.GenderId);
-            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name",user.RoleId);
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code", user.GenderId);
+            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name", user.RoleId);
             try
             {
-                var rolename =await _context.Roles.Where(x => x.Id == user.RoleId).FirstOrDefaultAsync();
+                var rolename = await _context.Roles.Where(x => x.Id == user.RoleId).FirstOrDefaultAsync();
 
                 var UserId = User.GetUserId();
                 ApplicationUser Registereduser = new ApplicationUser();
@@ -94,6 +97,49 @@ namespace HelpDeskSystem.Controllers
             catch (Exception ex)
             {
                 return View();
+            }
+        }
+        public async Task<IActionResult> ChangePassword(string id, ResetPasswordViewModel VM)
+        {
+
+            var User = await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            VM.Id = User.Id;
+            VM.Email = User.Email;
+            VM.Email = User.Email;
+            VM.FullName = User.FullName;
+            return View(VM);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmChangePassword(ResetPasswordViewModel VM)
+        {
+            try
+            {
+                var user = await _context.Users.Where(x => x.Id == VM.Id).FirstOrDefaultAsync();
+                await _userManager.RemovePasswordAsync(user);
+                var result = await _userManager.AddPasswordAsync(user, VM.ConfirmPassword);
+                if (result.Succeeded)
+                {
+                    user.LockoutEnabled = true;
+                    user.LockoutEnd = null;
+                    user.AccessFailedCount = 0;
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync(User.GetUserId());
+                    TempData["MESSEGE"] = "Password reset Successfully";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Error"] = "Password Can't reset Successfully";
+                    return RedirectToAction("ChangePassword", VM);
+                }
+            }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["Error"] = "Password Details Can't reset Successfully " + ex.Message;
+                return RedirectToAction("ChangePassword", VM);
             }
         }
 

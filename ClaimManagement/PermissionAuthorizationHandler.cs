@@ -7,31 +7,31 @@ namespace HelpDeskSystem.ClaimManagement
     public abstract class AttributeAuthorizationHandler<TRequirement, TAttribute> : AuthorizationHandler<TRequirement>
         where TRequirement : IAuthorizationRequirement where TAttribute : Attribute
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        protected AttributeAuthorizationHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement)
         {
-            // Retrieve the attributes associated with the current endpoint
-            var attributes=GetAttributesFromEndpoint(context.Resource);
+            List<PermissionAttribute> attributes = new();
+            var actions = _httpContextAccessor.HttpContext.GetEndpoint().Metadata;
+
+            var allPermission = (PermissionAttribute)actions.FirstOrDefault(x => x.GetType()==typeof(PermissionAttribute));
+
+            attributes.Add(allPermission);
+
 
             return HandleRequirementAsync(context, requirement, attributes);
 
         }
-       
+
         protected abstract Task HandleRequirementAsync(
-            AuthorizationHandlerContext context, 
-            TRequirement requirement, 
-            IEnumerable<TAttribute> attributes);
+            AuthorizationHandlerContext context,
+            TRequirement requirement,
+            IEnumerable<PermissionAttribute> attributes);
 
-        private static IEnumerable<TAttribute> GetAttributesFromEndpoint(object resource)
-        {
-            var endpoint = resource as Endpoint;
-            if (endpoint!=null)
-            {
-                return endpoint.Metadata.OfType<TAttribute>().ToList();
-
-            }
-            return Enumerable.Empty<TAttribute>();
-        }
     }
 
 
@@ -52,9 +52,14 @@ namespace HelpDeskSystem.ClaimManagement
     }
     public class PermissionAuthorizationHandler : AttributeAuthorizationHandler<PermissionAuthorizationRequirement, PermissionAttribute>
     {
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionAuthorizationRequirement requirement, IEnumerable<PermissionAttribute> attributes)
+        public PermissionAuthorizationHandler(IHttpContextAccessor httpContextAccessor):base(httpContextAccessor)
         {
-            if (attributes==null||!attributes.Any())
+                
+        }
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+            PermissionAuthorizationRequirement requirement, IEnumerable<PermissionAttribute> attributes)
+        {
+            if (attributes == null || !attributes.Any())
             {
                 context.Fail();
                 return;
@@ -80,7 +85,7 @@ namespace HelpDeskSystem.ClaimManagement
             // Check for permission in user's claims
 
             var haspermission = Task.FromResult(userPermissions != null && userPermissions.Contains(permission.ToLower()));
-            
+
             return haspermission;
         }
     }

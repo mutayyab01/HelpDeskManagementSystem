@@ -15,9 +15,13 @@ using HelpDeskSystem.Data.Migrations;
 using AutoMapper;
 using HelpDeskSystem.Services;
 using ElmahCore;
+using Microsoft.AspNetCore.Authorization;
+using HelpDeskSystem.ClaimManagement;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
+
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -36,6 +40,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Tickets
+        [Permission("TICKET:VIEW")]
         public async Task<IActionResult> Index(TicketViewModel VM)
         {
             var alltickets = _context.Tickets
