@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using HelpDeskSystem.ClaimManagement;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -22,6 +23,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: AuditTrails
+        [Permission("audit:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.AuditTrails.Include(a => a.User);

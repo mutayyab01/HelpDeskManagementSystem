@@ -9,9 +9,12 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using System.Security.Claims;
 using HelpDeskSystem.Services;
+using HelpDeskSystem.ClaimManagement;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class CountriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +25,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Countries
+        [Permission("countries:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Countries
@@ -63,6 +67,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Countries/Create
+        [Permission($"countries:{nameof(Create)}")]
+
         public IActionResult Create()
         {
            
@@ -88,6 +94,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Countries/Edit/5
+        [Permission($"countries:{nameof(Edit)}")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -144,6 +152,9 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Countries/Delete/5
+        [Permission($"countries:{nameof(Delete)}")]
+
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

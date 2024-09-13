@@ -11,9 +11,12 @@ using System.Security.Claims;
 using HelpDeskSystem.ViewModels;
 using AutoMapper;
 using HelpDeskSystem.Services;
+using Microsoft.AspNetCore.Authorization;
+using HelpDeskSystem.ClaimManagement;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class SystemCodesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,6 +29,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes
+        [Permission("systemcode:view")]
         public async Task<IActionResult> Index()
         {
             var systemcodes = await _context.SystemCodes
@@ -53,6 +57,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes/Create
+        [Permission($"systemcode:{nameof(Create)}")]
+
         public IActionResult Create()
         {
             return View();
@@ -82,6 +88,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes/Edit/5
+        [Permission($"systemcode:{nameof(Edit)}")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -139,6 +147,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes/Delete/5
+        [Permission($"systemcode:{nameof(Delete)}")]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

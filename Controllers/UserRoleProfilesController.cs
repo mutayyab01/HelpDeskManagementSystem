@@ -10,9 +10,12 @@ using HelpDeskSystem.Models;
 using System.Security.Claims;
 using HelpDeskSystem.Services;
 using HelpDeskSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using HelpDeskSystem.ClaimManagement;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class UserRoleProfilesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,6 +26,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: UserRoleProfiles
+        [Permission("userprofile:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.UserRoleProfiles

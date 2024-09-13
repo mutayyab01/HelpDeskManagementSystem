@@ -18,7 +18,7 @@ namespace HelpDeskSystem.ClaimManagement
             List<PermissionAttribute> attributes = new();
             var actions = _httpContextAccessor.HttpContext.GetEndpoint().Metadata;
 
-            var allPermission = (PermissionAttribute)actions.FirstOrDefault(x => x.GetType()==typeof(PermissionAttribute));
+            var allPermission = (PermissionAttribute)actions.FirstOrDefault(x => x.GetType() == typeof(PermissionAttribute));
 
             attributes.Add(allPermission);
 
@@ -52,9 +52,9 @@ namespace HelpDeskSystem.ClaimManagement
     }
     public class PermissionAuthorizationHandler : AttributeAuthorizationHandler<PermissionAuthorizationRequirement, PermissionAttribute>
     {
-        public PermissionAuthorizationHandler(IHttpContextAccessor httpContextAccessor):base(httpContextAccessor)
+        public PermissionAuthorizationHandler(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-                
+
         }
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             PermissionAuthorizationRequirement requirement, IEnumerable<PermissionAttribute> attributes)
@@ -84,9 +84,11 @@ namespace HelpDeskSystem.ClaimManagement
             var userPermissions = user.FindFirstValue("UserPermission")?.ToLower();
             // Check for permission in user's claims
 
-            var haspermission = Task.FromResult(userPermissions != null && userPermissions.Contains(permission.ToLower()));
+            var hasPermission = Task.FromResult(userPermissions != null
+                && userPermissions.Split('|').Contains(permission.ToLower()));
+            //var a = Task.FromResult(userPermissions != null && userPermissions.Split('|'));
 
-            return haspermission;
+            return hasPermission;
         }
     }
 

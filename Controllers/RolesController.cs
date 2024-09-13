@@ -1,12 +1,15 @@
-﻿using HelpDeskSystem.Data;
+﻿using HelpDeskSystem.ClaimManagement;
+using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class RolesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -21,11 +24,14 @@ namespace HelpDeskSystem.Controllers
             _roleManager = roleManager;
             _signInManager = signInManager;
         }
+        [Permission("systemrole:view")]
         public async Task<IActionResult> Index()
         {
             var roles = await _context.Roles.ToListAsync();
             return View(roles);
         }
+        [Permission($"systemrole:{nameof(Create)}")]
+
         public async Task<IActionResult> Create()
         {
 

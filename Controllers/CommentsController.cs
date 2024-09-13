@@ -9,9 +9,12 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using System.Security.Claims;
 using HelpDeskSystem.Services;
+using Microsoft.AspNetCore.Authorization;
+using HelpDeskSystem.ClaimManagement;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +25,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments
+        [Permission("comment:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Comments.Include(c => c.CreatedBy).Include(c => c.Ticket);
@@ -59,6 +63,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments/Create
+        [Permission($"comment:{nameof(Create)}")]
+
         public IActionResult Create()
         {
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
@@ -89,6 +95,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments/Edit/5
+        [Permission($"comment:{nameof(Edit)}")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -147,6 +155,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments/Delete/5
+        [Permission($"comment:{nameof(Delete)}")]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

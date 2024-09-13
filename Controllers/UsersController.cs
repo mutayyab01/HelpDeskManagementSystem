@@ -5,6 +5,7 @@ using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.Services;
 using HelpDeskSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using System.Security.Claims;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -30,6 +32,7 @@ namespace HelpDeskSystem.Controllers
             _signInManager = signInManager;
         }
         // GET: UsersController
+        [Permission("users:view")]
         public async Task<ActionResult> Index()
         {
             var users = await _context.Users
@@ -46,6 +49,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: UsersController/Create
+        [Permission($"users:{nameof(Create)}")]
+
         public ActionResult Create()
         {
             ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "GENDER"), "Id", "Code");
@@ -144,6 +149,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: UsersController/Edit/5
+        [Permission($"users:{nameof(Edit)}")]
+
         public ActionResult Edit(int id)
         {
             return View();
@@ -165,6 +172,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: UsersController/Delete/5
+        [Permission($"users:{nameof(Delete)}")]
+
         public ActionResult Delete(int id)
         {
             return View();

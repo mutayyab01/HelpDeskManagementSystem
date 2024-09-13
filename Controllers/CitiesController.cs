@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace HelpDeskSystem.Controllers
 {
     [Authorize]
-    [Permission("CITIES:VIEW")]
     public class CitiesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -56,6 +55,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Cities/Create
+        [Permission($"CITIES:{nameof(Create)}")]
         public IActionResult Create()
         {
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
@@ -84,6 +84,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Cities/Edit/5
+        [Permission($"CITIES:{nameof(Edit)}")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -142,6 +144,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Cities/Delete/5
+
+        [Permission($"CITIES:{nameof(Delete)}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -21,7 +21,6 @@ using HelpDeskSystem.ClaimManagement;
 namespace HelpDeskSystem.Controllers
 {
     [Authorize]
-
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -466,6 +465,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
         // GET: Tickets/Create
+        [Permission($"ticket:{nameof(Create)}")]
         public IActionResult Create()
         {
             ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "PRIORITY"), "Id", "Description");
@@ -642,6 +642,8 @@ namespace HelpDeskSystem.Controllers
             return RedirectToAction("Resolve", new { id = id });
         }
         // GET: Tickets/Edit/5
+        [Permission($"ticket:{nameof(Edit)}")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -699,6 +701,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Permission($"ticket:{nameof(Delete)}")]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

@@ -1,12 +1,15 @@
+using HelpDeskSystem.ClaimManagement;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,7 +20,7 @@ namespace HelpDeskSystem.Controllers
             _context = context;
 
         }
-
+        [Permission("dash:view")]
         public async Task<IActionResult> Index(TicketDashboardViewModel VM)
         {
             if (!User.Identity.IsAuthenticated)

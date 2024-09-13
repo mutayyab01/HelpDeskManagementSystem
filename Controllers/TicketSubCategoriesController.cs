@@ -10,9 +10,12 @@ using HelpDeskSystem.Models;
 using HelpDeskSystem.ViewModels;
 using System.Security.Claims;
 using HelpDeskSystem.Services;
+using Microsoft.AspNetCore.Authorization;
+using HelpDeskSystem.ClaimManagement;
 
 namespace HelpDeskSystem.Controllers
 {
+    [Authorize]
     public class TicketSubCategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,6 +26,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories
+        [Permission("subcategory:view")]
         public async Task<IActionResult> Index(int id, TicketSubCategoriesVM VM)
         {
             VM.TicketSubCategories = await _context.TicketSubCategories
@@ -67,6 +71,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories/Create
+        [Permission($"subcategory:{nameof(Create)}")]
+
         public IActionResult Create(int Id)
         {
             TicketSubCategory category = new();
@@ -102,6 +108,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories/Edit/5
+        [Permission($"subcategory:{nameof(Edit)}")]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -159,6 +167,8 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories/Delete/5
+        [Permission($"subcategory:{nameof(Delete)}")]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
