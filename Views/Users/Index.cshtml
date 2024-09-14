@@ -38,6 +38,9 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Role)
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IsLocked)
+                    </th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -70,6 +73,9 @@
                             @Html.DisplayFor(modelItem => item.Role.Name)
                         </td>
                         <td>
+                            @Html.DisplayFor(modelItem => item.IsLocked)
+                        </td>
+                        <td>
                             <div class="ms-auto">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-primary">Actions</button>
@@ -82,7 +88,7 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item">Activate User</a>
+                                            <a class="dropdown-item" asp-action="ActivateUser" asp-route-id="@item.Id">Activate User</a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>

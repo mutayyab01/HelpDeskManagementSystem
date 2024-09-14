@@ -110,8 +110,20 @@ namespace HelpDeskSystem.Controllers
             var User = await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
             VM.Id = User.Id;
             VM.Email = User.Email;
-            VM.Email = User.Email;
             VM.FullName = User.FullName;
+            VM.FirstName = User.FirstName;
+            VM.MiddleName = User.MiddleName;
+            VM.LastName = User.LastName;
+            VM.RoleId = User.RoleId;
+            VM.GenderId = User.GenderId;
+            if (VM.GenderId > 0)
+            {
+                VM.Gender = await _context.SystemCodeDetails.Where(x => x.Id == VM.GenderId).FirstOrDefaultAsync();
+            }
+            if (!string.IsNullOrEmpty(VM.RoleId))
+            {
+                VM.Role = await _context.Roles.Where(x => x.Id == VM.RoleId).FirstOrDefaultAsync();
+            }
             return View(VM);
         }
         [HttpPost]
@@ -147,7 +159,63 @@ namespace HelpDeskSystem.Controllers
                 return RedirectToAction("ChangePassword", VM);
             }
         }
+        public async Task<IActionResult> ActivateUser(string id, ResetPasswordViewModel VM)
+        {
 
+            var User = await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+            VM.Id = User.Id;
+            VM.Email = User.Email;
+            VM.FullName = User.FullName;
+            VM.FirstName = User.FirstName;
+            VM.MiddleName = User.MiddleName;
+            VM.LastName = User.LastName;
+            VM.RoleId = User.RoleId;
+            VM.GenderId = User.GenderId;
+            if (VM.GenderId > 0)
+            {
+                VM.Gender = await _context.SystemCodeDetails.Where(x => x.Id == VM.GenderId).FirstOrDefaultAsync();
+            }
+            if (!string.IsNullOrEmpty(VM.RoleId))
+            {
+                VM.Role = await _context.Roles.Where(x => x.Id == VM.RoleId).FirstOrDefaultAsync();
+            }
+            return View(VM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmActivateUser(ResetPasswordViewModel VM)
+        {
+            try
+            {
+                var user = await _context.Users.Where(x => x.Id == VM.Id).FirstOrDefaultAsync();
+
+
+                if (user != null)
+                {
+                    user.LockoutEnabled = true;
+                    user.LockoutEnd = null;
+                    user.AccessFailedCount = 0;
+                    user.IsLocked = false;
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync(User.GetUserId());
+                    TempData["MESSEGE"] = "User Account Acticated Successfully";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Error"] = "User Account Can't Acticated Successfully";
+                    return RedirectToAction("ActivateUser", VM);
+                }
+            }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["Error"] = "User Account Can't Acticated Successfully " + ex.Message;
+                return RedirectToAction("ActivateUser",VM);
+            }
+        }
         // GET: UsersController/Edit/5
         [Permission($"users:{nameof(Edit)}")]
 

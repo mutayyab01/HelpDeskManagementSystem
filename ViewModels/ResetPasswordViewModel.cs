@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using HelpDeskSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace HelpDeskSystem.ViewModels
@@ -25,7 +27,21 @@ namespace HelpDeskSystem.ViewModels
         public string FullName { get; set; }
 
         public string Id { get; set; }
+        [DisplayName("User Role")]
+        public string RoleId { get; set; }
+        public IdentityRole Role { get; set; }
 
+        [DisplayName("First Name")]
+        public string FirstName { get; set; }
+
+        [DisplayName("Middle Name")]
+        public string MiddleName { get; set; }
+
+        [DisplayName("Last Name")]
+        public string LastName { get; set; }
+        [DisplayName("Gender")]
+        public int GenderId { get; set; }
+        public SystemCodeDetail Gender { get; set; }
 
     }
 }
