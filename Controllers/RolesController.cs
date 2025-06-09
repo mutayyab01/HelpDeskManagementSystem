@@ -37,6 +37,8 @@ namespace HelpDeskSystem.Controllers
 
             return View();
         }
+        
+        [Permission($"systemrole:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RolesViewModel VM)

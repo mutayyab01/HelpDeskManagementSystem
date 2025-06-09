@@ -68,6 +68,7 @@ namespace HelpDeskSystem.Controllers
         // POST: SystemSettings/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"systemsettings:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SystemSetting systemSetting)
@@ -109,6 +110,7 @@ namespace HelpDeskSystem.Controllers
         // POST: SystemSettings/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"systemsettings:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, SystemSetting systemSetting)
@@ -169,6 +171,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: SystemSettings/Delete/5
+        [Permission($"systemsettings:{nameof(Delete)}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

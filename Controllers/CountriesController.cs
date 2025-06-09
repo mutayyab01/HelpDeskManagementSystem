@@ -78,6 +78,7 @@ namespace HelpDeskSystem.Controllers
         // POST: Countries/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"countries:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Country country)
@@ -115,6 +116,7 @@ namespace HelpDeskSystem.Controllers
         // POST: Countries/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"countries:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Country country)
@@ -175,6 +177,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: Countries/Delete/5
+        [Permission($"countries:{nameof(Delete)}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

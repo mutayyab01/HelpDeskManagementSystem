@@ -28,9 +28,9 @@ namespace HelpDeskSystem.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public TicketsController(ApplicationDbContext context, 
+        public TicketsController(ApplicationDbContext context,
             IConfiguration configuration, IWebHostEnvironment webHostEnvironment
-            ,IMapper mapper)
+            , IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
@@ -85,6 +85,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
 
+        [Permission("TICKETS:VIEW")]
         public async Task<IActionResult> AssignedTickets(TicketViewModel VM)
         {
             //var assignedstatus = await _context.SystemCodeDetails
@@ -142,6 +143,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
 
+        [Permission("TICKETS:VIEW")]
         public async Task<IActionResult> ClosedTickets(TicketViewModel VM)
         {
             var closedstatus = await _context.SystemCodeDetails
@@ -155,7 +157,7 @@ namespace HelpDeskSystem.Controllers
                  .Include(t => t.Priority)
                  .Include(t => t.Status)
                  .Include(t => t.TicketComments)
-                 .Where(t => t.Status.Id==closedstatus.Id)
+                 .Where(t => t.Status.Id == closedstatus.Id)
                  .OrderBy(x => x.CreatedOn)
              .AsQueryable();
             if (VM != null && !string.IsNullOrEmpty(VM.Title))
@@ -189,6 +191,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
 
+        [Permission("TICKETS:VIEW")]
         public async Task<IActionResult> ResolvedTickets(TicketViewModel VM)
         {
             var resolvedstatus = await _context.SystemCodeDetails
@@ -237,6 +240,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Tickets/Details/5
+        [Permission($"tickets:comments")]
         public async Task<IActionResult> Details(int? id, TicketViewModel VM)
         {
             if (id == null)
@@ -271,6 +275,8 @@ namespace HelpDeskSystem.Controllers
 
             return View(VM);
         }
+
+        [Permission($"tickets:{nameof(ReOpen)}")]
         public async Task<IActionResult> ReOpen(int? id, TicketViewModel VM)
         {
             ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
@@ -310,6 +316,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
 
+        [Permission($"tickets:assign")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignedConfirmed(int id, TicketViewModel VM)
@@ -347,14 +354,14 @@ namespace HelpDeskSystem.Controllers
             catch (Exception ex)
             {
                 ElmahExtensions.RaiseError(ex);
-                TempData["ERROR"] = "Ticket Could not Resolved Successfully"+ex.Message;
+                TempData["ERROR"] = "Ticket Could not Resolved Successfully" + ex.Message;
                 return View(VM);
 
             }
         }
 
 
-
+        [Permission($"tickets:{nameof(ReOpen)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReOpenConfirmed(int id, TicketViewModel VM)
@@ -380,7 +387,7 @@ namespace HelpDeskSystem.Controllers
             _context.Update(ticket);
 
             await _context.SaveChangesAsync(UserId);
-           
+
             TempData["MESSEGE"] = "Ticket Re-Opened Successfully";
 
             return RedirectToAction("Resolve", new { id = id });
@@ -426,6 +433,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
 
+        [Permission($"tickets:{nameof(Resolve)}")]
         public async Task<IActionResult> Resolve(int? id, TicketViewModel VM)
         {
             ViewData["StatusId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "RESOLUTIONSTATUS"), "Id", "Description");
@@ -477,6 +485,7 @@ namespace HelpDeskSystem.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"tickets:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketViewModel ticketVM, IFormFile accachmentFile)
@@ -551,11 +560,13 @@ namespace HelpDeskSystem.Controllers
             catch (Exception ex)
             {
                 ElmahExtensions.RaiseError(ex);
-                TempData["ERROR"] = "Ticket Couldn't Be Created "+ex.Message;
+                TempData["ERROR"] = "Ticket Couldn't Be Created " + ex.Message;
                 return View(ticketVM);
 
             }
         }
+
+        [Permission($"tickets:comments")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(int id, TicketViewModel VM)
@@ -584,6 +595,7 @@ namespace HelpDeskSystem.Controllers
             }
         }
 
+        [Permission($"tickets:close")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClosedConfirmed(int id, TicketViewModel VM)
@@ -609,13 +621,13 @@ namespace HelpDeskSystem.Controllers
             _context.Update(ticket);
 
             await _context.SaveChangesAsync(UserId);
-         
+
             TempData["MESSEGE"] = "Ticket Close Successfully";
 
             return RedirectToAction("Resolve", new { id = id });
         }
 
-
+        [Permission($"tickets:{nameof(Resolve)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResolveConfirmed(int id, TicketViewModel VM)
@@ -636,7 +648,7 @@ namespace HelpDeskSystem.Controllers
             _context.Update(ticket);
 
             await _context.SaveChangesAsync(UserId);
-         
+
             TempData["MESSEGE"] = "Ticket Resolution Details Created Successfully";
 
             return RedirectToAction("Resolve", new { id = id });
@@ -663,6 +675,7 @@ namespace HelpDeskSystem.Controllers
         // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"tickets:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Ticket ticket)
@@ -722,6 +735,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: Tickets/Delete/5
+        [Permission($"tickets:{nameof(Delete)}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -65,6 +65,7 @@ namespace HelpDeskSystem.Controllers
         // POST: TicketCategories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"categories:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketCategory ticketCategory)
@@ -103,6 +104,7 @@ namespace HelpDeskSystem.Controllers
         // POST: TicketCategories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"categories:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, TicketCategory ticketCategory)
@@ -161,6 +163,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: TicketCategories/Delete/5
+        [Permission($"categories:{nameof(Delete)}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

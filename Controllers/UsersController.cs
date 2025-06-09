@@ -60,6 +60,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: UsersController/Create
+        [Permission($"users:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ApplicationUser user)
@@ -104,6 +105,8 @@ namespace HelpDeskSystem.Controllers
                 return View();
             }
         }
+
+        [Permission($"users:{nameof(ChangePassword)}")]
         public async Task<IActionResult> ChangePassword(string id, ResetPasswordViewModel VM)
         {
 
@@ -126,6 +129,8 @@ namespace HelpDeskSystem.Controllers
             }
             return View(VM);
         }
+
+        [Permission($"users:{nameof(ChangePassword)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmChangePassword(ResetPasswordViewModel VM)
@@ -213,7 +218,7 @@ namespace HelpDeskSystem.Controllers
             {
                 ElmahExtensions.RaiseError(ex);
                 TempData["Error"] = "User Account Can't Acticated Successfully " + ex.Message;
-                return RedirectToAction("ActivateUser",VM);
+                return RedirectToAction("ActivateUser", VM);
             }
         }
         // GET: UsersController/Edit/5
@@ -225,6 +230,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: UsersController/Edit/5
+        [Permission($"users:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -248,6 +254,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: UsersController/Delete/5
+        [Permission($"users:{nameof(Delete)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

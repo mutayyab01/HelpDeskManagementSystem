@@ -75,6 +75,7 @@ namespace HelpDeskSystem.Controllers
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"comments:{nameof(Create)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Comment comment)
@@ -117,6 +118,7 @@ namespace HelpDeskSystem.Controllers
         // POST: Comments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Permission($"comments:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Comment comment)
@@ -177,6 +179,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // POST: Comments/Delete/5
+        [Permission($"comments:{nameof(Delete)}")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
