@@ -26,7 +26,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories
-        [Permission("subcategory:view")]
+        [Permission("subcategories:view")]
         public async Task<IActionResult> Index(int id, TicketSubCategoriesVM VM)
         {
             VM.TicketSubCategories = await _context.TicketSubCategories
@@ -71,7 +71,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories/Create
-        [Permission($"subcategory:{nameof(Create)}")]
+        [Permission($"subcategories:{nameof(Create)}")]
 
         public IActionResult Create(int Id)
         {
@@ -108,7 +108,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketSubCategories/Edit/5
-        [Permission($"subcategory:{nameof(Edit)}")]
+        [Permission($"subcategories:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -122,7 +122,7 @@ namespace HelpDeskSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Id", ticketSubCategory.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.TicketCategories, "Id", "Name", ticketSubCategory.CategoryId);
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "Id", ticketSubCategory.CreatedById);
             ViewData["ModifiedById"] = new SelectList(_context.Users, "Id", "Id", ticketSubCategory.ModifiedById);
             return View(ticketSubCategory);
@@ -160,14 +160,14 @@ namespace HelpDeskSystem.Controllers
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { id = ticketSubCategory.CategoryId });
 
 
             return View(ticketSubCategory);
         }
 
         // GET: TicketSubCategories/Delete/5
-        [Permission($"subcategory:{nameof(Delete)}")]
+        [Permission($"subcategories:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

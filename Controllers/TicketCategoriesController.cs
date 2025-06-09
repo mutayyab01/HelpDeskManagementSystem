@@ -25,7 +25,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketCategories
-        [Permission("category:view")]
+        [Permission("categories:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.TicketCategories.Include(t => t.CreatedBy).Include(t => t.ModifiedBy);
@@ -53,7 +53,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketCategories/Create
-        [Permission($"category:{nameof(Create)}")]
+        [Permission($"categories:{nameof(Create)}")]
 
         public IActionResult Create()
         {
@@ -82,7 +82,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketCategories/Edit/5
-        [Permission($"category:{nameof(Edit)}")]
+        [Permission($"categories:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -139,7 +139,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: TicketCategories/Delete/5
-        [Permission($"category:{nameof(Delete)}")]
+        [Permission($"categories:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

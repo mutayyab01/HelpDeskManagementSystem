@@ -25,7 +25,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments
-        [Permission("comment:view")]
+        [Permission("comments:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Comments.Include(c => c.CreatedBy).Include(c => c.Ticket);
@@ -63,7 +63,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments/Create
-        [Permission($"comment:{nameof(Create)}")]
+        [Permission($"comments:{nameof(Create)}")]
 
         public IActionResult Create()
         {
@@ -95,7 +95,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments/Edit/5
-        [Permission($"comment:{nameof(Edit)}")]
+        [Permission($"comments:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -155,7 +155,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Comments/Delete/5
-        [Permission($"comment:{nameof(Delete)}")]
+        [Permission($"comments:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

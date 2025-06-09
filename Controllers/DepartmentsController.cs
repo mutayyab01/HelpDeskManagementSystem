@@ -26,7 +26,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Departments
-        [Permission("department:view")]
+        [Permission("departments:view")]
 
         public async Task<IActionResult> Index()
         {
@@ -57,7 +57,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Departments/Create
-        [Permission($"department:{nameof(Create)}")]
+        [Permission($"departments:{nameof(Create)}")]
 
         public IActionResult Create()
         {
@@ -86,7 +86,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Departments/Edit/5
-        [Permission($"department:{nameof(Edit)}")]
+        [Permission($"departments:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -144,7 +144,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Departments/Delete/5
-        [Permission($"department:{nameof(Delete)}")]
+        [Permission($"departments:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

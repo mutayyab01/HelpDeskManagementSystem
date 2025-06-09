@@ -25,7 +25,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemTasks
-        [Permission("systemtask:view")]
+        [Permission("systemtasks:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.SystemTasks
@@ -55,7 +55,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemTasks/Create
-        [Permission($"systemtask:{nameof(Create)}")]
+        [Permission($"systemtasks:{nameof(Create)}")]
 
         public IActionResult Create()
         {
@@ -71,6 +71,8 @@ namespace HelpDeskSystem.Controllers
         public async Task<IActionResult> Create(SystemTask systemTask)
         {
             var UserId = User.GetUserId();
+            systemTask.Code = systemTask.Code.ToUpper();
+            systemTask.Name = systemTask.Name.ToUpper();
             systemTask.CreatedOn = DateTime.Now;
             systemTask.CreatedById = UserId;
 
@@ -84,7 +86,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemTasks/Edit/5
-        [Permission($"systemtask:{nameof(Edit)}")]
+        [Permission($"systemtasks:{nameof(Edit)}")]
 
 
         public async Task<IActionResult> Edit(int? id)
@@ -122,7 +124,7 @@ namespace HelpDeskSystem.Controllers
                 systemTask.ModifiedOn = DateTime.Now;
                 systemTask.ModifiedById = UserId;
 
-                _context.Update(systemTask);
+                    _context.Update(systemTask);
                 await _context.SaveChangesAsync(UserId);
             }
             catch (DbUpdateConcurrencyException)
@@ -143,7 +145,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemTasks/Delete/5
-        [Permission($"systemtask:{nameof(Delete)}")]
+        [Permission($"systemtasks:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

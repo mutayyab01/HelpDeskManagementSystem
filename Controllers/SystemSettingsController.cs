@@ -25,7 +25,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemSettings
-        [Permission("systemsetting:view")]
+        [Permission("systemsettings:view")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.SystemSettings
@@ -56,7 +56,7 @@ namespace HelpDeskSystem.Controllers
 
 
         // GET: SystemSettings/Create
-        [Permission($"systemsetting:{nameof(Create)}")]
+        [Permission($"systemsettings:{nameof(Create)}")]
 
         public IActionResult Create()
         {
@@ -87,7 +87,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemSettings/Edit/5
-        [Permission($"systemsetting:{nameof(Edit)}")]
+        [Permission($"systemsettings:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -147,7 +147,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemSettings/Delete/5
-        [Permission($"systemsetting:{nameof(Delete)}")]
+        [Permission($"systemsettings:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

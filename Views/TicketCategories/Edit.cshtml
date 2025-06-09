@@ -23,22 +23,22 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden="hidden">
                 <label asp-for="CreatedById" class="control-label"></label>
-                <select asp-for="CreatedById" class="form-control" asp-items="ViewBag.CreatedById"></select>
+                <input asp-for="CreatedById" class="form-control" />
                 <span asp-validation-for="CreatedById" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden="hidden">
                 <label asp-for="CreatedOn" class="control-label"></label>
                 <input asp-for="CreatedOn" class="form-control" />
                 <span asp-validation-for="CreatedOn" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden="hidden">
                 <label asp-for="ModifiedById" class="control-label"></label>
-                <select asp-for="ModifiedById" class="form-control" asp-items="ViewBag.ModifiedById"></select>
+                <input asp-for="ModifiedById" class="form-control" />
                 <span asp-validation-for="ModifiedById" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden="hidden">
                 <label asp-for="ModifiedOn" class="control-label"></label>
                 <input asp-for="ModifiedOn" class="form-control" />
                 <span asp-validation-for="ModifiedOn" class="text-danger"></span>

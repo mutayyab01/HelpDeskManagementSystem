@@ -20,7 +20,7 @@ namespace HelpDeskSystem.Controllers
             _context = context;
 
         }
-        [Permission("dash:view")]
+        [Permission("dashboard:view")]
         public async Task<IActionResult> Index(TicketDashboardViewModel VM)
         {
             if (!User.Identity.IsAuthenticated)

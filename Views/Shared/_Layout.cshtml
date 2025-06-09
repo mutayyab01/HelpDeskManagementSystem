@@ -10,21 +10,21 @@
 {
     var alluserpermission = User.FindFirst("UserPermission")?.Value ?? "";
     // Dashboard permission
-    var canViewDashboard = alluserpermission.Contains("|DASH:VIEW");
+    var canViewDashboard = alluserpermission.Contains("|DASHBOARD:VIEW");
     // Ticket permission
-    var canViewTicket = alluserpermission.Contains("|TICKET:VIEW");
-    var canViewComment = alluserpermission.Contains("|COMMENT:VIEW");
-    var canViewCategories = alluserpermission.Contains("|CATEGORY:VIEW");
-    var canViewSubCategories = alluserpermission.Contains("|SUBCATEGORY:VIEW");
+    var canViewTicket = alluserpermission.Contains("|TICKETS:VIEW");
+    var canViewComment = alluserpermission.Contains("|COMMENTS:VIEW");
+    var canViewCategories = alluserpermission.Contains("|CATEGORIES:VIEW");
+    var canViewSubCategories = alluserpermission.Contains("|SUBCATEGORIES:VIEW");
     var canViewAudit = alluserpermission.Contains("|AUDIT:VIEW");
     var canViewUsers = alluserpermission.Contains("|USERS:VIEW");
-    var canViewSystemCodes = alluserpermission.Contains("|SYSTEMCODE:VIEW");
-    var canViewSystemCodesDetails = alluserpermission.Contains("|SYSTEMCODEDETAIL:VIEW");
+    var canViewSystemCodes = alluserpermission.Contains("|SYSTEMCODES:VIEW");
+    var canViewSystemCodesDetails = alluserpermission.Contains("|SYSTEMCODEDETAILS:VIEW");
     var canViewSystemRole = alluserpermission.Contains("|SYSTEMROLE:VIEW");
-    var canViewDepartment = alluserpermission.Contains("|DEPARTMENT:VIEW");
-    var canViewSystemTask = alluserpermission.Contains("|SYSTEMTASK:VIEW");
+    var canViewDepartment = alluserpermission.Contains("|DEPARTMENTS:VIEW");
+    var canViewSystemTask = alluserpermission.Contains("|SYSTEMTASKS:VIEW");
     var canViewUserProfiles = alluserpermission.Contains("|USERPROFILE:VIEW");
-    var canViewSystemSetting = alluserpermission.Contains("|SYSTEMSETTING:VIEW");
+    var canViewSystemSetting = alluserpermission.Contains("|SYSTEMSETTINGS:VIEW");
     var canViewCountries = alluserpermission.Contains("|COUNTRIES:VIEW");
     var canViewCities = alluserpermission.Contains("|CITIES:VIEW");
 

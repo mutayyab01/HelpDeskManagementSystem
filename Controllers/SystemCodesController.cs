@@ -29,7 +29,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes
-        [Permission("systemcode:view")]
+        [Permission("systemcodes:view")]
         public async Task<IActionResult> Index()
         {
             var systemcodes = await _context.SystemCodes
@@ -57,7 +57,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes/Create
-        [Permission($"systemcode:{nameof(Create)}")]
+        [Permission($"systemcodes:{nameof(Create)}")]
 
         public IActionResult Create()
         {
@@ -88,7 +88,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes/Edit/5
-        [Permission($"systemcode:{nameof(Edit)}")]
+        [Permission($"systemcodes:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -147,7 +147,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodes/Delete/5
-        [Permission($"systemcode:{nameof(Delete)}")]
+        [Permission($"systemcodes:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

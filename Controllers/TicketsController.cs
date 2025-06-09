@@ -39,7 +39,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Tickets
-        [Permission("TICKET:VIEW")]
+        [Permission("TICKETS:VIEW")]
         public async Task<IActionResult> Index(TicketViewModel VM)
         {
             var alltickets = _context.Tickets
@@ -465,7 +465,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
         // GET: Tickets/Create
-        [Permission($"ticket:{nameof(Create)}")]
+        [Permission($"tickets:{nameof(Create)}")]
         public IActionResult Create()
         {
             ViewData["PriorityId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "PRIORITY"), "Id", "Description");
@@ -642,7 +642,7 @@ namespace HelpDeskSystem.Controllers
             return RedirectToAction("Resolve", new { id = id });
         }
         // GET: Tickets/Edit/5
-        [Permission($"ticket:{nameof(Edit)}")]
+        [Permission($"tickets:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -701,7 +701,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: Tickets/Delete/5
-        [Permission($"ticket:{nameof(Delete)}")]
+        [Permission($"tickets:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {

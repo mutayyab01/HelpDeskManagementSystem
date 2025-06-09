@@ -26,7 +26,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodeDetails
-        [Permission("systemcodedetail:view")]
+        [Permission("systemcodedetails:view")]
         public async Task<IActionResult> Index()
         {
             var systemcodesdetails = await _context.SystemCodeDetails
@@ -56,7 +56,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodeDetails/Create
-        [Permission($"systemcodedetail:{nameof(Create)}")]
+        [Permission($"systemcodedetails:{nameof(Create)}")]
         public IActionResult Create()
         {
             ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description");
@@ -86,7 +86,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodeDetails/Edit/5
-        [Permission($"systemcodedetail:{nameof(Edit)}")]
+        [Permission($"systemcodedetails:{nameof(Edit)}")]
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -147,7 +147,7 @@ namespace HelpDeskSystem.Controllers
         }
 
         // GET: SystemCodeDetails/Delete/5
-        [Permission($"systemcodedetail:{nameof(Delete)}")]
+        [Permission($"systemcodedetails:{nameof(Delete)}")]
 
         public async Task<IActionResult> Delete(int? id)
         {
