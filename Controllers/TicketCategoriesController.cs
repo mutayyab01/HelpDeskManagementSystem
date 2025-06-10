@@ -11,6 +11,7 @@ using System.Security.Claims;
 using HelpDeskSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using HelpDeskSystem.ClaimManagement;
+using HelpDeskSystem.ViewModels;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -26,10 +27,17 @@ namespace HelpDeskSystem.Controllers
 
         // GET: TicketCategories
         [Permission("categories:view")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(TicketCategoryViewModel VM)
         {
-            var applicationDbContext = _context.TicketCategories.Include(t => t.CreatedBy).Include(t => t.ModifiedBy);
-            return View(await applicationDbContext.ToListAsync());
+
+            VM.TicketCategories= await _context.TicketCategories
+                .Include(t => t.CreatedBy)
+                .Include(t => t.ModifiedBy)
+                .ToListAsync();
+
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+
+            return View(VM);
         }
 
         // GET: TicketCategories/Details/5

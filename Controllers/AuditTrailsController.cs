@@ -9,6 +9,7 @@ using HelpDeskSystem.Data;
 using HelpDeskSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using HelpDeskSystem.ClaimManagement;
+using HelpDeskSystem.ViewModels;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -24,10 +25,15 @@ namespace HelpDeskSystem.Controllers
 
         // GET: AuditTrails
         [Permission("audit:view")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(AuditTrailViewModel VM)
         {
-            var applicationDbContext = _context.AuditTrails.Include(a => a.User);
-            return View(await applicationDbContext.ToListAsync());
+            VM.AuditTrails = await _context.AuditTrails
+                .Include(a => a.User)
+                .OrderBy(x => x.Id)
+                .ToListAsync();
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+
+            return View(VM);
         }
 
         // GET: AuditTrails/Details/5

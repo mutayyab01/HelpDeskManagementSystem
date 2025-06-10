@@ -1,8 +1,62 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.ApplicationUser>
+﻿@model HelpDeskSystem.ViewModels.ApplicationUserViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
+
+<div class="card rounded-4">
+    <form id="myForm" asp-action="AssignedTickets" method="post">
+        <div class="col-md-12">
+            <div class="row p-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="RoleId" class="control-label"></label>
+                        <select asp-for="RoleId" class="form-control single-select" asp-items="ViewBag.RoleId">
+                            <option value=" ">Select Role</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="MiddleName" class="control-label"></label>
+                        <input asp-for="MiddleName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3 float-end me-5">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success px-5"><i class="fadeIn animated bx bx-search-alt"></i> Search</button>
+                    <button type="button" id="clearBtn" class="btn btn-primary px-5 ms-2"><i class="fadeIn animated bx bx-reset"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
@@ -45,7 +99,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.ApplicationUsers)
                 {
                     <tr>
                         <td>

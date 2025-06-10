@@ -36,6 +36,9 @@ namespace HelpDeskSystem.Controllers
                 .Where(x => x.CategoryId == id)
                 .ToListAsync();
             VM.CategoryId = id;
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["CategoryId"] = new SelectList(_context.TicketSubCategories, "Id", "Name");
+
             return View(VM);
 
         }
@@ -46,6 +49,8 @@ namespace HelpDeskSystem.Controllers
                 .Include(t => t.CreatedBy)
                 .Include(t => t.ModifiedBy)
                 .ToListAsync();
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            ViewData["CategoryId"] = new SelectList(_context.TicketSubCategories, "Id", "Name");
             return View(VM);
 
         }

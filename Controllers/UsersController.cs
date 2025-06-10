@@ -33,13 +33,15 @@ namespace HelpDeskSystem.Controllers
         }
         // GET: UsersController
         [Permission("users:view")]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(ApplicationUserViewModel VM)
         {
-            var users = await _context.Users
+            VM.ApplicationUsers= await _context.Users
                 .Include(x => x.Role)
                 .Include(x => x.Gender)
                 .ToListAsync();
-            return View(users);
+
+            ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
+            return View(VM);
         }
 
         // GET: UsersController/Details/5

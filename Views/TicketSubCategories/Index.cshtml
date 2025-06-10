@@ -4,6 +4,50 @@
     ViewData["Title"] = "Index";
 }
 <div class="card rounded-4">
+    <form id="myForm" asp-action="AssignedTickets" method="post">
+        <div class="col-md-12">
+            <div class="row p-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Code" class="control-label"></label>
+                        <input asp-for="Code" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        <select asp-for="CategoryId" class="form-control single-select" asp-items="ViewBag.CategoryId">
+                            <option value=" ">Select Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="CreatedById" class="control-label"></label>
+                        <select asp-for="CreatedById" class="form-control single-select" asp-items="ViewBag.CreatedById">
+                            <option value=" ">Select User</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3 float-end me-5">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success px-5"><i class="fadeIn animated bx bx-search-alt"></i> Search</button>
+                    <button type="button" id="clearBtn" class="btn btn-danger px-5 ms-2"><i class="fadeIn animated bx bx-reset"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
             <h6 class="mb-0">Tickets Sub Categories List</h6>

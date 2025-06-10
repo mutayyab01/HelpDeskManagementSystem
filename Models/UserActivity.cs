@@ -4,8 +4,8 @@ namespace HelpDeskSystem.Models
 {
     public class UserActivity
     {
-        public string CreatedById { get; set; }
         [DisplayName("Created By ")]
+        public string CreatedById { get; set; }
         public ApplicationUser CreatedBy { get; set; }
         [DisplayName("Created On ")]
         public DateTime CreatedOn { get; set; }
