@@ -12,6 +12,7 @@ using HelpDeskSystem.Data.Migrations;
 using HelpDeskSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using HelpDeskSystem.ClaimManagement;
+using HelpDeskSystem.ViewModels;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -27,13 +28,39 @@ namespace HelpDeskSystem.Controllers
 
         // GET: SystemCodeDetails
         [Permission("systemcodedetails:view")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(SystemCodeDetailViewModel VM)
         {
-            var systemcodesdetails = await _context.SystemCodeDetails
+            var systemCodeDetails = _context.SystemCodeDetails
                 .Include(s => s.SystemCode)
                 .Include(s => s.CreatedBy)
-                .ToListAsync();
-            return View(systemcodesdetails);
+                .AsQueryable();
+
+            if (VM != null)
+            {
+                if (VM != null && !string.IsNullOrEmpty(VM.Code))
+                {
+                    systemCodeDetails = systemCodeDetails.Where(x => x.Code.Contains(VM.Code));
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+                {
+                    systemCodeDetails = systemCodeDetails.Where(x => x.CreatedById == VM.CreatedById);
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.Description))
+                {
+                    systemCodeDetails = systemCodeDetails.Where(x => x.Description.Contains(VM.Description));
+                }
+                if (VM != null && VM.SystemCodeId > 0)
+                {
+                    systemCodeDetails = systemCodeDetails.Where(x => x.SystemCodeId == VM.SystemCodeId);
+                }
+            }
+
+            VM.SystemCodeDetails = await systemCodeDetails.ToListAsync();
+
+            ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description");
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+
+            return View(VM);
         }
 
         // GET: SystemCodeDetails/Details/5
@@ -128,7 +155,7 @@ namespace HelpDeskSystem.Controllers
                 _context.Update(systemCodeDetail);
                 await _context.SaveChangesAsync(UserId);
 
-              
+
                 TempData["MESSEGE"] = "System Codes Details Updated Successfully";
             }
             catch (DbUpdateConcurrencyException)

@@ -1,8 +1,44 @@
-﻿@model IEnumerable<HelpDeskSystem.Models.SystemCode>
+﻿@model HelpDeskSystem.ViewModels.SystemCodeViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "SYstem Codes";
 }
+
+<div class="card rounded-4">
+    <form id="myForm" asp-action="Index" method="post">
+        <div class="col-md-12">
+            <div class="row p-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Code" class="control-label"></label>
+                        <input asp-for="Code" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="CreatedById" class="control-label"></label>
+                        <select asp-for="CreatedById" class="form-control single-select" asp-items="ViewBag.CreatedById">
+                            <option value=" ">Select User</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3 float-end me-5">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success px-5"><i class="fadeIn animated bx bx-search-alt"></i> Search</button>
+                    <button type="button" id="clearBtn" class="btn btn-primary px-5 ms-2"><i class="fadeIn animated bx bx-reset"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="card rounded-4">
     <div class="card-body">
         <div class="d-flex align-items-center">
@@ -32,7 +68,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.SystemCodes)
                 {
                     <tr>
                         <td>

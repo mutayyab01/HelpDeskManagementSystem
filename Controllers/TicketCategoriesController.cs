@@ -30,10 +30,28 @@ namespace HelpDeskSystem.Controllers
         public async Task<IActionResult> Index(TicketCategoryViewModel VM)
         {
 
-            VM.TicketCategories= await _context.TicketCategories
+            var ticketCategories = _context.TicketCategories
                 .Include(t => t.CreatedBy)
                 .Include(t => t.ModifiedBy)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (VM != null)
+            {
+                if (VM != null && !string.IsNullOrEmpty(VM.Code))
+                {
+                    ticketCategories = ticketCategories.Where(x => x.Code.Contains(VM.Code));
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+                {
+                    ticketCategories = ticketCategories.Where(x => x.CreatedById == VM.CreatedById);
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.Name))
+                {
+                    ticketCategories = ticketCategories.Where(x => x.Name == VM.Name);
+                }
+            }
+
+            VM.TicketCategories = await ticketCategories.ToListAsync();
 
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
 

@@ -29,13 +29,35 @@ namespace HelpDeskSystem.Controllers
         [Permission("subcategories:view")]
         public async Task<IActionResult> Index(int id, TicketSubCategoriesVM VM)
         {
-            VM.TicketSubCategories = await _context.TicketSubCategories
+            var ticketSubCategories = _context.TicketSubCategories
                 .Include(t => t.Category)
                 .Include(t => t.CreatedBy)
                 .Include(t => t.ModifiedBy)
                 .Where(x => x.CategoryId == id)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (VM != null)
+            {
+                if (VM != null && !string.IsNullOrEmpty(VM.Code))
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.Code.Contains(VM.Code));
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.CreatedById == VM.CreatedById);
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.Name))
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.Name.Contains(VM.Name));
+                }
+                if (VM != null && VM.CategoryId > 0)
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.CategoryId == VM.CategoryId);
+                }
+            }
+
             VM.CategoryId = id;
+            VM.TicketSubCategories = await ticketSubCategories.ToListAsync();
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["CategoryId"] = new SelectList(_context.TicketSubCategories, "Id", "Name");
 
@@ -44,11 +66,33 @@ namespace HelpDeskSystem.Controllers
         }
         public async Task<IActionResult> SubCategories(TicketSubCategoriesVM VM)
         {
-            VM.TicketSubCategories = await _context.TicketSubCategories
+            var ticketSubCategories =  _context.TicketSubCategories
                 .Include(t => t.Category)
                 .Include(t => t.CreatedBy)
                 .Include(t => t.ModifiedBy)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (VM != null)
+            {
+                if (VM != null && !string.IsNullOrEmpty(VM.Code))
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.Code.Contains(VM.Code));
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.CreatedById == VM.CreatedById);
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.Name))
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.Name.Contains(VM.Name));
+                }
+                if (VM != null && VM.CategoryId > 0)
+                {
+                    ticketSubCategories = ticketSubCategories.Where(x => x.CategoryId == VM.CategoryId);
+                }
+            }
+
+            VM.TicketSubCategories = await ticketSubCategories.ToListAsync();
             ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["CategoryId"] = new SelectList(_context.TicketSubCategories, "Id", "Name");
             return View(VM);

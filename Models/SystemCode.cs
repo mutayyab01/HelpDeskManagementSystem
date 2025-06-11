@@ -1,6 +1,6 @@
 ﻿namespace HelpDeskSystem.Models
 {
-    public class SystemCode:UserActivity
+    public class SystemCode : UserActivity
     {
         public int Id { get; set; }
         public string Code { get; set; }

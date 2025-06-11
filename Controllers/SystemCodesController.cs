@@ -30,12 +30,33 @@ namespace HelpDeskSystem.Controllers
 
         // GET: SystemCodes
         [Permission("systemcodes:view")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(SystemCodeViewModel VM)
         {
-            var systemcodes = await _context.SystemCodes
-                .Include(x => x.CreatedBy)
-                .ToListAsync();
-            return View(systemcodes);
+            var systemCodes = _context
+                     .SystemCodes
+                     .Include(x => x.CreatedBy)
+                     .AsQueryable();
+
+            if (VM != null)
+            {
+                if (VM != null && !string.IsNullOrEmpty(VM.Code))
+                {
+                    systemCodes = systemCodes.Where(x => x.Code.Contains(VM.Code));
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.CreatedById))
+                {
+                    systemCodes = systemCodes.Where(x => x.CreatedById == VM.CreatedById);
+                }
+                if (VM != null && !string.IsNullOrEmpty(VM.Description))
+                {
+                    systemCodes = systemCodes.Where(x => x.Description.Contains(VM.Description));
+                }
+            }
+
+            VM.SystemCodes = await systemCodes.ToListAsync();
+
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            return View(VM);
         }
 
         // GET: SystemCodes/Details/5
@@ -74,14 +95,14 @@ namespace HelpDeskSystem.Controllers
         {
             var UserId = User.GetUserId();
             SystemCode systemCodeDetails = new();
-            var systemCode = _mapper.Map(VM,systemCodeDetails);
+            var systemCode = _mapper.Map(VM, systemCodeDetails);
 
             systemCode.CreatedOn = DateTime.Now;
             systemCode.CreatedById = UserId;
             _context.Add(systemCode);
             await _context.SaveChangesAsync(UserId);
 
-         
+
             TempData["MESSEGE"] = "System Codes Created Successfully";
             return RedirectToAction(nameof(Index));
 
@@ -129,7 +150,7 @@ namespace HelpDeskSystem.Controllers
                 _context.Update(systemCode);
                 await _context.SaveChangesAsync(UserId);
 
-              
+
                 TempData["MESSEGE"] = "System Codes Updated Successfully";
             }
             catch (DbUpdateConcurrencyException)
