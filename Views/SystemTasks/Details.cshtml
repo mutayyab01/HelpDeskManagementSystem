@@ -1,42 +1,38 @@
 ﻿@model HelpDeskSystem.Models.SystemTask
 
 @{
-    ViewData["Title"] = "Details";
+	ViewData["Title"] = "System Task Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>SystemTask</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Code)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Code)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Parent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Parent.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderNo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderNo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="card shadow-sm rounded-4">
+	<div class="card-body">
+		<h4 class="card-title text-primary mb-3">System Task Details</h4>
+		<hr />
+		<table class="table table-bordered table-striped table-hover">
+			<tr>
+				<th>@Html.DisplayNameFor(model => model.Code)</th>
+				<td>@Html.DisplayFor(model => model.Code)</td>
+			</tr>
+			<tr>
+				<th>@Html.DisplayNameFor(model => model.Name)</th>
+				<td>@Html.DisplayFor(model => model.Name)</td>
+			</tr>
+			<tr>
+				<th>@Html.DisplayNameFor(model => model.Parent)</th>
+				<td>@Html.DisplayFor(model => model.Parent.Id)</td>
+			</tr>
+			<tr>
+				<th>@Html.DisplayNameFor(model => model.OrderNo)</th>
+				<td>@Html.DisplayFor(model => model.OrderNo)</td>
+			</tr>
+		</table>
+	</div>
+	<div class="card-footer">
+		<a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+			<i class="bx bx-edit-alt"></i> Edit Task
+		</a>
+		<a asp-action="Index" class="btn btn-secondary">
+			<i class="bx bx-arrow-back"></i> Back to List
+		</a>
+	</div>
 </div>
