@@ -1,57 +1,50 @@
 ﻿@model HelpDeskSystem.Models.UserRoleProfile
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete User Role Profile";
 }
 
-<h1>Delete</h1>
+<div class="card shadow-sm rounded-4 mt-4">
+    <div class="card-body">
+        <h4 class="card-title text-danger">Confirm Deletion</h4>
+        <p class="text-muted">Are you sure you want to delete this user role profile?</p>
+        <hr />
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>UserRoleProfile</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Task)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Task.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedBy.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedOn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedBy.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedOn)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+        <table class="table table-bordered table-striped table-responsive table-hover table-responsive-lg">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Task)</th>
+                <td>@Html.DisplayFor(model => model.Task.Id)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Role)</th>
+                <td>@Html.DisplayFor(model => model.Role.Id)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
+                <td>@Html.DisplayFor(model => model.CreatedBy.Id)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.CreatedOn)</th>
+                <td>@Html.DisplayFor(model => model.CreatedOn)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.ModifiedBy)</th>
+                <td>@Html.DisplayFor(model => model.ModifiedBy.Id)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.ModifiedOn)</th>
+                <td>@Html.DisplayFor(model => model.ModifiedOn)</td>
+            </tr>
+        </table>
+
+        <form asp-action="Delete" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger me-2">
+                <i class="bx bx-trash"></i> Delete Profile
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bx bx-arrow-back"></i> Back to List
+            </a>
+        </form>
+    </div>
 </div>
