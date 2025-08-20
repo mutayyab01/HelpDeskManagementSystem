@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="elmah" Version="1.2.2" />
     <PackageReference Include="ElmahCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.4" />
@@ -21,6 +23,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>
 
   <ItemGroup>

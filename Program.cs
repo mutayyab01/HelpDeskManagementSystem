@@ -1,9 +1,12 @@
 using AutoMapper;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Elmah;
 using ElmahCore;
 using ElmahCore.Mvc;
 using HelpDeskSystem.ClaimManagement;
 using HelpDeskSystem.Data;
+using HelpDeskSystem.Interfaces;
 using HelpDeskSystem.Models;
 using HelpDeskSystem.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +34,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddTransient<IPdfService, PdfService>();
+builder.Services.AddTransient<IExportService, ExportService>();
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
@@ -133,7 +140,7 @@ app.UseCookiePolicy();
 app.UseElmah();
 app.UseRouting();
 app.UseSession();
- 
+
 app.UseAuthentication();
 app.UseAuthorization();
 

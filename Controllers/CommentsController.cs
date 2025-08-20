@@ -11,6 +11,7 @@ using System.Security.Claims;
 using HelpDeskSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using HelpDeskSystem.ClaimManagement;
+using HelpDeskSystem.ViewModels;
 
 namespace HelpDeskSystem.Controllers
 {
@@ -26,15 +27,32 @@ namespace HelpDeskSystem.Controllers
 
         // GET: Comments
         [Permission("comments:view")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(CommentViewModel vm)
         {
-            var applicationDbContext = _context.Comments.Include(c => c.CreatedBy).Include(c => c.Ticket);
-            return View(await applicationDbContext.ToListAsync());
+            var allComments = _context.Comments
+                   .Include(x => x.CreatedBy)
+                   .Include(x => x.Ticket)
+                   .AsQueryable();
+            if (vm != null)
+            {
+                if (!string.IsNullOrEmpty(vm.Description))
+                {
+                    allComments = allComments.Where(x => x.Description.Contains(vm.Description));
+                }
+                if (!string.IsNullOrEmpty(vm.CreatedById))
+                {
+                    allComments = allComments.Where(x => x.CreatedById == vm.CreatedById);
+                }
+            }
+            vm.Comments = await allComments.ToListAsync();
+            ViewData["CreatedById"] = new SelectList(_context.Users, "Id", "FullName");
+            return View(vm);
+
         }
 
         public async Task<IActionResult> TicketComments(int id)
         {
-            var comments =await _context.Comments.Where(x => x.TicketId==id)
+            var comments = await _context.Comments.Where(x => x.TicketId == id)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Ticket)
                 .ToListAsync();
@@ -85,7 +103,7 @@ namespace HelpDeskSystem.Controllers
             comment.CreatedById = UserId;
             _context.Add(comment);
             await _context.SaveChangesAsync(UserId);
-          
+
             TempData["MESSEGE"] = "Ticket Comment Created Successfully";
 
             return RedirectToAction(nameof(Index));
