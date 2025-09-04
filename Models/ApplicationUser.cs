@@ -11,8 +11,10 @@ namespace HelpDeskSystem.Models
         [DisplayName("Gender")]
         public int GenderId { get; set; }
         public SystemCodeDetail Gender { get; set; }
-        public string Country { get; set; }
-        public string City { get; set; }
+        public int? CountryId { get; set; }
+        public Country Country { get; set; }
+        public int? CityId { get; set; }
+        public City City { get; set; }
         public string FullName => $"{FirstName} {MiddleName} {LastName}";
         [DisplayName("Role Name")]
         public string? RoleId { get; set; }

@@ -37,6 +37,19 @@ namespace HelpDeskSystem.Controllers
                 return Json(new { });
             }
         }
+        [HttpGet]
+        [AllowAnonymous]
+
+        public async Task<JsonResult> GetCitiesByCountry(int countryId)
+        {
+            var cities =await _context.Cities
+                .Where(c => c.CountryId == countryId)
+                .Select(c => new { c.Id, c.Name })
+                .ToListAsync();
+
+            return new JsonResult(cities);
+        }
+
 
     }
 }

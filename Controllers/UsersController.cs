@@ -35,7 +35,7 @@ namespace HelpDeskSystem.Controllers
         [Permission("users:view")]
         public async Task<ActionResult> Index(ApplicationUserViewModel VM)
         {
-            VM.ApplicationUsers= await _context.Users
+            VM.ApplicationUsers = await _context.Users
                 .Include(x => x.Role)
                 .Include(x => x.Gender)
                 .ToListAsync();
@@ -224,6 +224,42 @@ namespace HelpDeskSystem.Controllers
             }
         }
         // GET: UsersController/Edit/5
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeactivateUser(string id)
+        {
+            try
+            {
+                var user = await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+
+                if (user != null)
+                {
+                    user.LockoutEnabled = true;
+                    user.LockoutEnd = null;
+                    user.AccessFailedCount = 0;
+                    user.IsLocked = true;
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync(User.GetUserId());
+                    TempData["MESSEGE"] = "User Account Deacticated Successfully";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["Error"] = "User Account Can't Deacticated Successfully";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["Error"] = "User Account Can't Deacticated Successfully " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
         [Permission($"users:{nameof(Edit)}")]
 
         public ActionResult Edit(int id)

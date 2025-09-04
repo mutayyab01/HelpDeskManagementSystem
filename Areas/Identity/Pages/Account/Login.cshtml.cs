@@ -123,6 +123,12 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false) ;
                 if (result.Succeeded)
                 {
+                    if (user.IsLocked.HasValue && user.IsLocked.Value)
+                    {
+                        await _signInManager.SignOutAsync();
+                        ModelState.AddModelError(string.Empty,"Your account has been deactivated. Please contact the administrator.");
+                        return RedirectToPage("./Lockout");
+                    }
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

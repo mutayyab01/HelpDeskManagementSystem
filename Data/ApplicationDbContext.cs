@@ -100,11 +100,11 @@ namespace HelpDeskSystem.Data
                 releationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
 
-            builder.Entity<CitiesView>().HasNoKey().ToTable(nameof(CitiesView),k=>k.ExcludeFromMigrations());
-            builder.Entity<TicketsSummaryView>().HasNoKey().ToTable(nameof(TicketsSummaryView),k=>k.ExcludeFromMigrations());
-            builder.Entity<TicketsPriorityView>().HasNoKey().ToTable(nameof(TicketsPriorityView),k=>k.ExcludeFromMigrations());
+            builder.Entity<CitiesView>().HasNoKey().ToTable(nameof(CitiesView), k => k.ExcludeFromMigrations());
+            builder.Entity<TicketsSummaryView>().HasNoKey().ToTable(nameof(TicketsSummaryView), k => k.ExcludeFromMigrations());
+            builder.Entity<TicketsPriorityView>().HasNoKey().ToTable(nameof(TicketsPriorityView), k => k.ExcludeFromMigrations());
 
-            
+
             builder.Entity<Ticket>()
                 .HasOne(c => c.CreatedBy)
                 .WithMany()
@@ -179,12 +179,59 @@ namespace HelpDeskSystem.Data
        .HasForeignKey(c => c.GenderId)
        .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<ApplicationUser>()
+    .HasOne(u => u.Country)
+    .WithMany() // no navigation on Country
+    .HasForeignKey(u => u.CountryId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ApplicationUser>()
+                .HasOne(u => u.City)
+                .WithMany() // no navigation on City
+                .HasForeignKey(u => u.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.Entity<City>()
        .HasOne(c => c.Country)
        .WithMany()
        .HasForeignKey(c => c.CountryId)
        .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Country>()
+    .HasOne(c => c.CreatedBy)
+    .WithMany()
+    .HasForeignKey(c => c.CreatedById)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Country>()
+                .HasOne(c => c.ModifiedBy)
+                .WithMany()
+                .HasForeignKey(c => c.ModifiedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<City>()
+    .HasOne(c => c.CreatedBy)
+    .WithMany()
+    .HasForeignKey(c => c.CreatedById)
+    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<City>()
+                .HasOne(c => c.ModifiedBy)
+                .WithMany()
+                .HasForeignKey(c => c.ModifiedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<SystemCodeDetail>()
+.HasOne(c => c.CreatedBy)
+.WithMany()
+.HasForeignKey(c => c.CreatedById)
+.OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<SystemCodeDetail>()
+                .HasOne(c => c.ModifiedBy)
+                .WithMany()
+                .HasForeignKey(c => c.ModifiedById)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

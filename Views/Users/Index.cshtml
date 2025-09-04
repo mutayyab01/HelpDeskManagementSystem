@@ -147,7 +147,9 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item">Deactivate User</a>
+                                            <form asp-action="DeactivateUser" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                                <button type="submit" class="dropdown-item">Deactivate User</button>
+                                            </form>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>

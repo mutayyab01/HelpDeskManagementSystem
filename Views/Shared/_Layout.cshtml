@@ -5,93 +5,83 @@
 @using Microsoft.AspNetCore.Identity;
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+<!doctype html>
+<html lang="en" class="@theme">
 
-@if (User.Identity.IsAuthenticated)
-{
-    var alluserpermission = User.FindFirst("UserPermission")?.Value ?? "";
-    // Dashboard permission
-    var canViewDashboard = alluserpermission.Contains("|DASHBOARD:VIEW");
-    // Ticket permission
-    var canViewTicket = alluserpermission.Contains("|TICKETS:VIEW");
-    var canViewComment = alluserpermission.Contains("|COMMENTS:VIEW");
-    var canViewCategories = alluserpermission.Contains("|CATEGORIES:VIEW");
-    var canViewSubCategories = alluserpermission.Contains("|SUBCATEGORIES:VIEW");
-    var canViewAudit = alluserpermission.Contains("|AUDIT:VIEW");
-    var canViewUsers = alluserpermission.Contains("|USERS:VIEW");
-    var canViewSystemCodes = alluserpermission.Contains("|SYSTEMCODES:VIEW");
-    var canViewSystemCodesDetails = alluserpermission.Contains("|SYSTEMCODEDETAILS:VIEW");
-    var canViewSystemRole = alluserpermission.Contains("|SYSTEMROLE:VIEW");
-    var canViewDepartment = alluserpermission.Contains("|DEPARTMENTS:VIEW");
-    var canViewSystemTask = alluserpermission.Contains("|SYSTEMTASKS:VIEW");
-    var canViewUserProfiles = alluserpermission.Contains("|USERPROFILE:VIEW");
-    var canViewSystemSetting = alluserpermission.Contains("|SYSTEMSETTINGS:VIEW");
-    var canViewCountries = alluserpermission.Contains("|COUNTRIES:VIEW");
-    var canViewCities = alluserpermission.Contains("|CITIES:VIEW");
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="~/assets/images/favicon-32x32.png" type="image/png" />
+    <!--plugins-->
+    <link href="~/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
+    <link href="~/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+    <link href="~/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
+    <link href="~/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/bootstrap-extended.css" rel="stylesheet" />
+    <link href="~/assets/css/style.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
 
+    <!-- loader-->
+    <link href="~/assets/css/pace.min.css" rel="stylesheet" />
 
+    <!--Theme Styles-->
+    <link href="~/assets/css/dark-theme.css" rel="stylesheet" />
+    <link href="~/assets/css/light-theme.css" rel="stylesheet" />
+    <link href="~/assets/css/semi-dark.css" rel="stylesheet" />
+    <link href="~/assets/css/header-colors.css" rel="stylesheet" />
+    @* <link href="~/assets/css/HighCharts.css" rel="stylesheet" /> *@
+    <link href="~/assets/css/hummingbird-treeview.css" rel="stylesheet" />
+    <link href="~/assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
+    <style type="text/css">
+        .page-footer {
+            background: #fff;
+            left: 250px;
+            right: 0;
+            top: 97vh;
+            position: fixed;
+            text-align: center;
+            padding: 7px;
+            font-size: 14px;
+            border-top: 1px solid #e4e4e4;
+            z-index: 3;
+        }
 
-
-
-
-
-    <!doctype html>
-    <html lang="en" class="@theme">
-
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="~/assets/images/favicon-32x32.png" type="image/png" />
-        <!--plugins-->
-        <link href="~/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
-        <link href="~/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
-        <link href="~/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
-        <link href="~/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
-        <!-- Bootstrap CSS -->
-        <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="~/assets/css/bootstrap-extended.css" rel="stylesheet" />
-        <link href="~/assets/css/style.css" rel="stylesheet" />
-        <link href="~/assets/css/icons.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-
-
-        <!-- loader-->
-        <link href="~/assets/css/pace.min.css" rel="stylesheet" />
-
-        <!--Theme Styles-->
-        <link href="~/assets/css/dark-theme.css" rel="stylesheet" />
-        <link href="~/assets/css/light-theme.css" rel="stylesheet" />
-        <link href="~/assets/css/semi-dark.css" rel="stylesheet" />
-        <link href="~/assets/css/header-colors.css" rel="stylesheet" />
-        @* <link href="~/assets/css/HighCharts.css" rel="stylesheet" /> *@
-        <link href="~/assets/css/hummingbird-treeview.css" rel="stylesheet" />
-        <link href="~/assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-        <link href="~/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
-        <link href="~/assets/plugins/select2/css/select2-bootstrap4.css" rel="stylesheet" />
-        <style type="text/css">
-            .page-footer {
-                background: #fff;
-                left: 250px;
-                right: 0;
-                top: 97vh;
-                position: fixed;
-                text-align: center;
-                padding: 7px;
-                font-size: 14px;
-                border-top: 1px solid #e4e4e4;
-                z-index: 3;
-            }
-
-            .rounded-4 {
-                border-radius: 25px;
-            }
-        </style>
-        <title>Help Desk</title>
-    </head>
-
-    <body>
+        .rounded-4 {
+            border-radius: 25px;
+        }
+    </style>
+    <title>Help Desk</title>
+</head>
+<body>
+    @if (User.Identity.IsAuthenticated)
+    {
+        var alluserpermission = User.FindFirst("UserPermission")?.Value ?? "";
+        // Dashboard permission
+        var canViewDashboard = alluserpermission.Contains("|DASHBOARD:VIEW");
+        // Ticket permission
+        var canViewTicket = alluserpermission.Contains("|TICKETS:VIEW");
+        var canViewComment = alluserpermission.Contains("|COMMENTS:VIEW");
+        var canViewCategories = alluserpermission.Contains("|CATEGORIES:VIEW");
+        var canViewSubCategories = alluserpermission.Contains("|SUBCATEGORIES:VIEW");
+        var canViewAudit = alluserpermission.Contains("|AUDIT:VIEW");
+        var canViewUsers = alluserpermission.Contains("|USERS:VIEW");
+        var canViewSystemCodes = alluserpermission.Contains("|SYSTEMCODES:VIEW");
+        var canViewSystemCodesDetails = alluserpermission.Contains("|SYSTEMCODEDETAILS:VIEW");
+        var canViewSystemRole = alluserpermission.Contains("|SYSTEMROLE:VIEW");
+        var canViewDepartment = alluserpermission.Contains("|DEPARTMENTS:VIEW");
+        var canViewSystemTask = alluserpermission.Contains("|SYSTEMTASKS:VIEW");
+        var canViewUserProfiles = alluserpermission.Contains("|USERPROFILE:VIEW");
+        var canViewSystemSetting = alluserpermission.Contains("|SYSTEMSETTINGS:VIEW");
+        var canViewCountries = alluserpermission.Contains("|COUNTRIES:VIEW");
+        var canViewCities = alluserpermission.Contains("|CITIES:VIEW");
 
 
         <!--start wrapper-->
@@ -863,103 +853,103 @@
             <!--end switcher-->
         </div>
         <!--end wrapper-->
-        <!-- Bootstrap bundle JS -->
-        <script src="~/assets/js/bootstrap.bundle.min.js"></script>
-        <!--plugins-->
-        <script src="~/assets/js/jquery.min.js"></script>
-        <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
-        <script src="~/assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
-        <script src="~/assets/js/table-datatable.js"></script>
-        <script src="~/assets/plugins/select2/js/select2.min.js"></script>
-        <script src="~/assets/js/form-select2.js"></script>
-        <script src="~/assets/plugins/simplebar/js/simplebar.min.js"></script>
-        <script src="~/assets/plugins/metismenu/js/metisMenu.min.js"></script>
-        <script src="~/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
-        <script src="~/assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
-        <script src="~/assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js"></script>
-        <script src="~/assets/js/pace.min.js"></script>
-        <script src="~/assets/plugins/chartjs/js/Chart.min.js"></script>
-        <script src="~/assets/plugins/chartjs/js/Chart.extension.js"></script>
-        @* <script src="~/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script> *@
+    }
+    else
+    {
+        @RenderBody()
+    }
+    <!-- Bootstrap bundle JS -->
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+    <!--plugins-->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/assets/js/table-datatable.js"></script>
+    <script src="~/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/assets/js/form-select2.js"></script>
+    <script src="~/assets/plugins/simplebar/js/simplebar.min.js"></script>
+    <script src="~/assets/plugins/metismenu/js/metisMenu.min.js"></script>
+    <script src="~/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+    <script src="~/assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
+    <script src="~/assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="~/assets/js/pace.min.js"></script>
+    <script src="~/assets/plugins/chartjs/js/Chart.min.js"></script>
+    <script src="~/assets/plugins/chartjs/js/Chart.extension.js"></script>
+    @* <script src="~/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script> *@
 
-        <!--app-->
-        <script src="~/assets/js/app.js"></script>
-        <script src="~/assets/js/index.js"></script>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/exporting.js"></script>
-        <script src="https://code.highcharts.com/modules/export-data.js"></script>
-        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-        <script src="https://code.highcharts.com/highcharts-3d.js"></script>
-        <script type="text/javascript">
-            $('.single-select').select2({
-                theme: 'bootstrap4',
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: Boolean($(this).data('allow-clear')),
+    <!--app-->
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/index.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script type="text/javascript">
+        $('.single-select').select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+        $('.multiple-select').select2({
+            theme: 'bootstrap4',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            allowClear: Boolean($(this).data('allow-clear')),
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#example2').DataTable({
+                lengthChange: false,
+                buttons: ['copy', 'excel', 'pdf', 'print']
             });
-            $('.multiple-select').select2({
-                theme: 'bootstrap4',
-                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-                placeholder: $(this).data('placeholder'),
-                allowClear: Boolean($(this).data('allow-clear')),
-            });
-        </script>
-        <script>
-            $(document).ready(function () {
-                $('#example').DataTable();
-            });
-        </script>
-        <script>
-            $(document).ready(function () {
-                var table = $('#example2').DataTable({
-                    lengthChange: false,
-                    buttons: ['copy', 'excel', 'pdf', 'print']
-                });
 
-                table.buttons().container()
-                    .appendTo('#example2_wrapper .col-md-6:eq(0)');
-            });
-        </script>
+            table.buttons().container()
+                .appendTo('#example2_wrapper .col-md-6:eq(0)');
+        });
+    </script>
 
-        <script>
-            new PerfectScrollbar(".best-product")
-        </script>
+    <script>
+        new PerfectScrollbar(".best-product")
+    </script>
 
-        <script type="text/javascript">
-            function toggleTheme() {
-                const htmlElement = document.documentElement;
-                let newTheme;
+    <script type="text/javascript">
+        function toggleTheme() {
+            const htmlElement = document.documentElement;
+            let newTheme;
 
-                if (htmlElement.classList.contains('semi-dark')) {
-                    htmlElement.classList.remove('semi-dark');
-                    htmlElement.classList.add('dark');
-                    newTheme = 'dark';
-                } else if (htmlElement.classList.contains('dark')) {
-                    htmlElement.classList.remove('dark');
-                    htmlElement.classList.add('light');
-                    newTheme = 'light';
-                } else {
-                    htmlElement.classList.remove('light');
-                    htmlElement.classList.add('semi-dark');
-                    newTheme = 'semi-dark';
-                }
-
-                document.cookie = `theme=${newTheme};path=/;max-age=31536000`; // Store the theme in a cookie for 1 year
+            if (htmlElement.classList.contains('semi-dark')) {
+                htmlElement.classList.remove('semi-dark');
+                htmlElement.classList.add('dark');
+                newTheme = 'dark';
+            } else if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                newTheme = 'light';
+            } else {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('semi-dark');
+                newTheme = 'semi-dark';
             }
-            function triggerLogout() {
-                // Trigger the click event on the hidden submit button
-                document.getElementById('logoutButton').click();
-            }
-        </script>
 
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
+            document.cookie = `theme=${newTheme};path=/;max-age=31536000`; // Store the theme in a cookie for 1 year
+        }
+        function triggerLogout() {
+            // Trigger the click event on the hidden submit button
+            document.getElementById('logoutButton').click();
+        }
+    </script>
 
-    </html>
-
-}
-
-
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
 
 
 
