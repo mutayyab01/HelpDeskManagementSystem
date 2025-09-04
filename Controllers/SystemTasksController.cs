@@ -72,7 +72,7 @@ namespace HelpDeskSystem.Controllers
         public async Task<IActionResult> Create(SystemTask systemTask)
         {
             var UserId = User.GetUserId();
-            systemTask.Code = systemTask.Code.ToUpper();
+            systemTask.Code = systemTask.Code.Replace(" ", "").ToUpper();
             systemTask.Name = systemTask.Name.ToUpper();
             systemTask.CreatedOn = DateTime.Now;
             systemTask.CreatedById = UserId;

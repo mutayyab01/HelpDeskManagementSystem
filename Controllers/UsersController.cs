@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 using System.Security.Claims;
 
 namespace HelpDeskSystem.Controllers
@@ -166,6 +167,8 @@ namespace HelpDeskSystem.Controllers
                 return RedirectToAction("ChangePassword", VM);
             }
         }
+
+        [Permission($"users:{nameof(ActivateUser)}")]
         public async Task<IActionResult> ActivateUser(string id, ResetPasswordViewModel VM)
         {
 
@@ -189,6 +192,7 @@ namespace HelpDeskSystem.Controllers
             return View(VM);
         }
 
+        [Permission($"users:{nameof(ActivateUser)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmActivateUser(ResetPasswordViewModel VM)
@@ -225,6 +229,7 @@ namespace HelpDeskSystem.Controllers
         }
         // GET: UsersController/Edit/5
 
+        [Permission($"users:{nameof(DeactivateUser)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeactivateUser(string id)
@@ -260,8 +265,67 @@ namespace HelpDeskSystem.Controllers
             }
         }
 
-        [Permission($"users:{nameof(Edit)}")]
+        [Permission($"users:{nameof(ChangeRole)}")]
+        public async Task<IActionResult> ChangeRole(string id, ResetPasswordViewModel VM)
+        {
+            var User = await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
 
+            var allroles = await _context.Roles.OrderBy(x => x.Name).ToListAsync();
+            ViewData["RoleId"] = new SelectList(allroles, "Id", "Name", id);
+
+            return View(User);
+        }
+        
+        [Permission($"users:{nameof(ChangeRole)}")]
+        [HttpPost, ActionName("ChangeRole")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmChangeRole(string id, ApplicationUser user)
+        {
+            if (id != user.Id)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var existingUser = await _userManager.FindByIdAsync(id);
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                var currentRoles = await _userManager.GetRolesAsync(existingUser);
+                if (currentRoles.Any())
+                {
+                    await _userManager.RemoveFromRolesAsync(existingUser, currentRoles);
+                }
+
+                var newRole = await _context.Roles
+                    .Where(r => r.Id == user.RoleId)
+                    .Select(r => r.Name)
+                    .FirstOrDefaultAsync();
+
+                if (newRole != null)
+                {
+                    await _userManager.AddToRoleAsync(existingUser, newRole);
+
+                    existingUser.RoleId = user.RoleId;
+                    _context.Users.Update(existingUser);
+                    await _context.SaveChangesAsync(User.GetUserId());
+                }
+
+                TempData["Message"] = "Role updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ElmahExtensions.RaiseError(ex);
+                TempData["Error"] = "An error occurred while changing the role: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Permission($"users:{nameof(Edit)}")]
         public ActionResult Edit(int id)
         {
             return View();

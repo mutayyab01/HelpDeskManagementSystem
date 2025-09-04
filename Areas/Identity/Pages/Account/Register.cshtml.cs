@@ -152,7 +152,7 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
                 user.GenderId = Input.GenderId;
                 user.CityId = Input.CityId;
                 user.CountryId = Input.CountryId;
-
+                user.IsLocked =false;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -160,7 +160,7 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-                    var role = await _roleManager.FindByNameAsync("Software Developer");
+                    var role = await _roleManager.FindByNameAsync("Client");
                     if (role != null)
                     {
                         await _userManager.AddToRoleAsync(user, role.Name);
