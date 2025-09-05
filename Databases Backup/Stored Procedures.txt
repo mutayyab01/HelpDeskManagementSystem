@@ -1,0 +1,41 @@
+CREATE   VIEW [dbo].[CitiesView]
+AS
+SELECT T1.Id,T1.PostalCode,T1.Name AS CityName, 
+T2.Id AS CountryId,T2.Name AS CountryName,
+CONCAT(T3.FirstName,' ',T3.MiddleName,' ',T3.LastName) 
+AS CreatedBy,
+T1.CreatedOn,
+CONCAT(T4.FirstName,' ',T4.MiddleName,' ',T4.LastName) 
+AS ModifiedBy,
+T1.ModifiedOn
+FROM  Cities T1
+INNER JOIN Countries T2 ON T1.CountryId =T2.Id
+INNER JOIN AspNetUsers T3 ON T1.CreatedById = T3.Id
+LEFT JOIN AspNetUsers T4 ON T1.ModifiedById = T4.Id
+GO
+
+CREATE     view [dbo].[TicketsPriorityView] 
+AS
+SELECT 
+Count(T1.Id) AS TotalTickets,
+SUM(CASE WHEN T2.Code='Urgent' THEN 1 ELSE  0 END) AS UrgentTickets,
+SUM(CASE WHEN T2.Code='VeryUrgent' THEN 1 ELSE  0 END) AS VeryUrgentTickets,
+SUM(CASE WHEN T2.Code='Medium' THEN 1 ELSE  0 END) AS MediumTickets
+FROM Tickets T1
+INNER JOIN SystemCodeDetails T2 ON T1.PriorityId =T2.Id
+GO
+
+CREATE     view [dbo].[TicketsSummaryView] 
+AS
+SELECT 
+Count(T1.Id) AS TotalTickets,
+SUM(CASE WHEN T2.Code='Assigned' THEN 1 ELSE  0 END) AS AssignedTickets,
+SUM(CASE WHEN T2.Code='Closed' THEN 1 ELSE  0 END) AS ClosedTickets,
+SUM(CASE WHEN T2.Code='Pending' THEN 1 ELSE  0 END) AS PendingTickets,
+SUM(CASE WHEN T2.Code='Resolved' THEN 1 ELSE  0 END) AS ResolvedTickets,
+SUM(CASE WHEN T2.Code='ReOpened' THEN 1 ELSE  0 END) AS ReOpenedTickets,
+SUM(CASE WHEN T2.Code='Escalated' THEN 1 ELSE  0 END) AS EscalatedTickets
+FROM Tickets T1
+INNER JOIN SystemCodeDetails T2 ON T1.StatusId =T2.Id
+GO
+
