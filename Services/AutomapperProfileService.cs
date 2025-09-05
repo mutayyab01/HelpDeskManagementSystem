@@ -10,7 +10,7 @@ namespace HelpDeskSystem.Services
         {
             CreateMap<TicketViewModel, Ticket>().ReverseMap();
             CreateMap<SystemCodeViewModel, SystemCode>().ReverseMap();
-            
+            CreateMap<ApplicationUserViewModel, ApplicationUser>().ReverseMap();
         }
     }
 }

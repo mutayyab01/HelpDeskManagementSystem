@@ -1,4 +1,6 @@
-﻿using ElmahCore;
+﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
+using ElmahCore;
 using HelpDeskSystem.ClaimManagement;
 using HelpDeskSystem.Data;
 using HelpDeskSystem.Data.Migrations;
@@ -24,22 +26,51 @@ namespace HelpDeskSystem.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+
         public UsersController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
+            RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
         // GET: UsersController
         [Permission("users:view")]
         public async Task<ActionResult> Index(ApplicationUserViewModel VM)
         {
-            VM.ApplicationUsers = await _context.Users
+            var allusers = _context.Users
                 .Include(x => x.Role)
                 .Include(x => x.Gender)
-                .ToListAsync();
+                .AsQueryable();
+            if (VM != null && !string.IsNullOrEmpty(VM.RoleId?.Trim()))
+            {
+                allusers = allusers.Where(x => x.RoleId == VM.RoleId.Trim());
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.FirstName?.Trim()))
+            {
+                allusers = allusers.Where(x => x.FirstName.Contains(VM.FirstName.Trim()));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.MiddleName?.Trim()))
+            {
+                allusers = allusers.Where(x => x.MiddleName.Contains(VM.MiddleName.Trim()));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.LastName?.Trim()))
+            {
+                allusers = allusers.Where(x => x.LastName.Contains(VM.LastName.Trim()));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.PhoneNumber?.Trim()))
+            {
+                allusers = allusers.Where(x => x.PhoneNumber.Contains(VM.PhoneNumber.Trim()));
+            }
+            if (VM != null && !string.IsNullOrEmpty(VM.Email?.Trim()))
+            {
+                allusers = allusers.Where(x => x.Email.Contains(VM.Email.Trim()));
+            }
+
+            VM.ApplicationUsers = await allusers.ToListAsync();
 
             ViewData["RoleId"] = new SelectList(_context.Roles.ToList(), "Id", "Name");
             return View(VM);
@@ -275,7 +306,7 @@ namespace HelpDeskSystem.Controllers
 
             return View(User);
         }
-        
+
         [Permission($"users:{nameof(ChangeRole)}")]
         [HttpPost, ActionName("ChangeRole")]
         [ValidateAntiForgeryToken]
@@ -314,7 +345,7 @@ namespace HelpDeskSystem.Controllers
                     await _context.SaveChangesAsync(User.GetUserId());
                 }
 
-                TempData["Message"] = "Role updated successfully!";
+                TempData["MESSEGE"] = "User Role Updated Successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -326,25 +357,75 @@ namespace HelpDeskSystem.Controllers
         }
 
         [Permission($"users:{nameof(Edit)}")]
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
-            return View();
+            var applicationUserViewModel = new ApplicationUserViewModel();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var applicationUser = await _context.Users.FindAsync(id);
+            var VM = _mapper.Map<ApplicationUserViewModel>(applicationUser);
+
+            if (applicationUser == null)
+            {
+                return NotFound();
+            }
+            ViewData["SelectedCityId"] = VM.CityId;
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description");
+            return View(VM);
         }
 
         // POST: UsersController/Edit/5
         [Permission($"users:{nameof(Edit)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(string id, ApplicationUserViewModel user)
         {
+            var existingUser = await _userManager.FindByIdAsync(id);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+            if (id != user.Id)
+            {
+                return NotFound();
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (existingUser.Email != user.Email)
+                {
+                    TempData["Error"] = "You Can't Edit Your Email ";
+                    ViewData["CityId"] = new SelectList(_context.Cities.Where(c => c.CountryId == user.CountryId), "Id", "Name", user.CityId);
+                    ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", user.CountryId);
+                    ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", user.GenderId);
+                    return View();
+                }
+                // ✅ Only update selected fields
+                existingUser.FirstName = user.FirstName;
+                existingUser.MiddleName = user.MiddleName;
+                existingUser.LastName = user.LastName;
+                existingUser.UserName = user.UserName;
+                existingUser.NormalizedUserName = user.UserName?.ToUpper();
+                existingUser.PhoneNumber = user.PhoneNumber;
+                existingUser.GenderId = user.GenderId;
+                existingUser.CountryId = user.CountryId;
+                existingUser.CityId = user.CityId;
+                TempData["MESSEGE"] = "User Details Updated Successfully";
+                await _context.SaveChangesAsync(User.GetUserId());
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ElmahExtensions.RaiseError(ex);
+                TempData["Error"] = "An error occurred while Updating the User: " + ex.Message;
+                return RedirectToAction("Index");
             }
+            ViewData["CityId"] = new SelectList(_context.Cities.Where(c => c.CountryId == user.CountryId), "Id", "Name", user.CityId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", user.CountryId);
+            ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", user.GenderId);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: UsersController/Delete/5

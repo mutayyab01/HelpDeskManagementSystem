@@ -37,7 +37,7 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-light bg-white rounded-0 border-bottom">
                 <div class="container">
-                    <a class="navbar-brand" href="#"><img src="~/assets/images/logo-icon.png" width="40" height="40" alt="" /> Help Desk</a>
+                    <a class="navbar-brand" href="/identity/account/login"><img src="~/assets/images/logo-icon.png" width="40" height="40" alt="" /> Help Desk</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -54,10 +54,10 @@
                                     Services <i class="bi bi-chevron-down align-middle ms-2"></i>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Web and Mobile App Development</a></li>
+                                    <li><a class="dropdown-item" href="#">Desktop Application Developement</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    <li><a class="dropdown-item" href="#">.NET and MERN Development</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -111,23 +111,51 @@
                                             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3">
-                                                    <input asp-for="Input.FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                                    <input asp-for="Input.FirstName" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter First Name" />
                                                     <label asp-for="Input.FirstName">First Name</label>
                                                     <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3">
-                                                    <input asp-for="Input.MiddleName" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                                    <input asp-for="Input.MiddleName" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter Middle Name " />
                                                     <label asp-for="Input.MiddleName">Middle Name</label>
                                                     <span asp-validation-for="Input.MiddleName" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3">
-                                                    <input asp-for="Input.LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                                                    <label asp-for="Input.LastName">Last Name</label>
+                                                    <input asp-for="Input.LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter Last Name" />
+                                                    <label asp-for="Input.LastName">LastName</label>
                                                     <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3">
+                                                    <input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter UserName" />
+                                                    <label asp-for="Input.UserName">UserName</label>
+                                                    <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3">
+                                                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter Email name@example.com" />
+                                                    <label asp-for="Input.Email">Email</label>
+                                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3">
+                                                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Enter Password" />
+                                                    <label asp-for="Input.Password">Password</label>
+                                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3">
+                                                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Enter Confirm Password" />
+                                                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                                                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -155,27 +183,6 @@
                                                     </select>
                                                     <label asp-for="Input.CityId">City</label>
                                                     <span asp-validation-for="Input.CityId" class="text-danger"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                                                    <label asp-for="Input.Email">Email</label>
-                                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                                                    <label asp-for="Input.Password">Password</label>
-                                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-floating mb-3">
-                                                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                                                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                                                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>

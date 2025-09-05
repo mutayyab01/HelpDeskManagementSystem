@@ -1,0 +1,149 @@
+﻿@model HelpDeskSystem.ViewModels.ApplicationUserViewModel
+
+@{
+    ViewData["Title"] = "Update";
+}
+<div class="card rounded-4">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            <h6 class="mb-0">Update System Users</h6>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" id="SelectedCityId" value="@ViewData["SelectedCityId"]" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FirstName" class="control-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="MiddleName" class="control-label"></label>
+                                <input asp-for="MiddleName" class="form-control" />
+                                <span asp-validation-for="MiddleName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LastName" class="control-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Email" class="control-label"></label>
+                                <input asp-for="Email" readonly="readonly"  class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="UserName" class="control-label"></label>
+                                <input asp-for="UserName" class="form-control" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber" class="control-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="GenderId" class="control-label"></label>
+                                <select asp-for="GenderId" class="form-control" asp-items="ViewBag.GenderId">
+                                    <option value=" ">Select Gender</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CountryId" class="control-label"></label>
+                                <select asp-for="CountryId" id="CountryId" class="form-control" asp-items="ViewBag.CountryId">
+                                    <option value=" ">Select Country</option>
+                                </select>
+                                <span asp-validation-for="CountryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CityId" class="control-label"></label>
+                                <select asp-for="CityId" class="form-control">
+                                    <option value=" ">Select City</option>
+                                </select>
+                                <span asp-validation-for="CityId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                  
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+                $(document).ready(function () {
+            if ($("#CountryId").val()) {
+                $("#CountryId").trigger("change");
+            }
+        });
+               $(document).on("change", "#CountryId", function () {
+            var $dropdown = $(this);
+            var working = "<span id='spin'><i class='fa fa-spinner fa-spin fa-2x fa-fw'></i></span>";
+            console.log($dropdown,working);
+            if ($dropdown.val() !== "") {
+                $.ajax({
+                    url: "/Data/GetCitiesByCountry?countryId=" + $dropdown.val(), // ✅ using query string
+                    dataType: "json",
+                    beforeSend: function () {
+                        $dropdown.parent().append(working);
+                        $("#CityId").html(""); // ✅ match City select’s generated id
+                        $("#CityId").append("<option value=''>-- Select City --</option>");
+                    },
+                       success: function (json) {
+                        var selectedCityId = $("#SelectedCityId").val(); // get saved value
+                        $.each(json, function (i, city) {
+                            var option = $('<option></option>').val(city.id).html(city.name);
+                            if (city.id == selectedCityId) {
+                                option.attr("selected", "selected"); // preserve selection
+                            }
+                            $("#CityId").append(option);
+                        });
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        console.error("Error: " + thrownError);
+                    },
+                    complete: function () {
+                        $("#spin").remove();
+                    }
+                });
+            } else {
+                $("#CityId").html("<option value=''>-- Select City --</option>");
+            }
+        });
+
+    </script>
+
+
+}

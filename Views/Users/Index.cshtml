@@ -5,7 +5,7 @@
 }
 
 <div class="card rounded-4">
-    <form id="myForm" asp-action="AssignedTickets" method="post" enctype="multipart/form-data">
+    <form id="myForm" asp-action="Index" method="post" enctype="multipart/form-data">
         <a asp-controller="ExcelExports" asp-action="ExportUsers" class="btn btn-primary float-end"> <i class="fadeIn animated bx bx-export"></i> Export To Excel</a>
         <div class="col-md-12">
             <div class="row p-3">
@@ -70,7 +70,7 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.DisplayNameFor(model => model.Id)
+                        @Html.DisplayNameFor(model => model.UserName)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.FirstName)
@@ -104,7 +104,7 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Id)
+                            @Html.DisplayFor(modelItem => item.UserName)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.FirstName)
@@ -157,7 +157,7 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item">Update User</a>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Update User</a>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>

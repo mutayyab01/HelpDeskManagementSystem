@@ -17,8 +17,10 @@ namespace HelpDeskSystem.ViewModels
         [DisplayName("Gender")]
         public int GenderId { get; set; }
         public SystemCodeDetail Gender { get; set; }
-        public string Country { get; set; }
-        public string City { get; set; }
+        [DisplayName("Country")]
+        public int CountryId { get; set; }
+        [DisplayName("City")]
+        public int CityId { get; set; }
         public string FullName => $"{FirstName} {MiddleName} {LastName}";
         [DisplayName("Role Name")]
         public string? RoleId { get; set; }

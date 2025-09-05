@@ -100,6 +100,11 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
+            
+            [Display(Name = "UserName")]
+            [Required]
+            public string UserName { get; set; }
+
             [Required]
             [Display(Name = "Gender")]
             public int GenderId { get; set; }
@@ -153,7 +158,8 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
                 user.CityId = Input.CityId;
                 user.CountryId = Input.CountryId;
                 user.IsLocked =false;
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+
+                await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 

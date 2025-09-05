@@ -113,39 +113,30 @@ namespace HelpDeskSystem.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user==null)
+                if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Email Doesn't Exist");
+                    ModelState.AddModelError(string.Empty, "Email Doesn't Exist! Please Register First!");
                     return Page();
                 }
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false) ;
-                if (result.Succeeded)
-                {
-                    if (user.IsLocked.HasValue && user.IsLocked.Value)
-                    {
-                        await _signInManager.SignOutAsync();
-                        ModelState.AddModelError(string.Empty,"Your account has been deactivated. Please contact the administrator.");
-                        return RedirectToPage("./Lockout");
-                    }
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
+                // check password manually
+                var isPasswordValid = await _userManager.CheckPasswordAsync(user, Input.Password);
+                if (!isPasswordValid)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
+                if (user.IsLocked.HasValue && user.IsLocked.Value)
+                {
+                    ModelState.AddModelError(string.Empty, "Your account has been deactivated. Please contact the administrator.");
+                    return RedirectToPage("./Lockout");
+                }
+                
+                await _signInManager.SignInAsync(user, Input.RememberMe);
+
+                _logger.LogInformation("User logged in.");
+                return LocalRedirect(returnUrl);
             }
 
             // If we got this far, something failed, redisplay form
