@@ -59,7 +59,7 @@ namespace HelpDeskSystem.Controllers
         }
 
 
-
+        [Permission("systemrole:assignrights")]
         public async Task<IActionResult> UserRights(string id)
         {
             ProfileViewModel VM = new();
@@ -81,7 +81,8 @@ namespace HelpDeskSystem.Controllers
 
             return View(VM);
         }
-
+        
+        [Permission("systemrole:assignrights")]
         [HttpPost]
         public async Task<IActionResult> UserRights(ProfileViewModel VM)
         {
