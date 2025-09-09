@@ -30,8 +30,20 @@ namespace HelpDeskSystem.Controllers
             else
             {
                 //  var alluserpermission = User.FindFirst(c => c.Type == "UserPermission")?.Value ?? "";
-               VM.TicketsSummary = await _context.TicketsSummaryView.FirstOrDefaultAsync();
-               VM.TicketsPriority = await _context.TicketsPriorityView.FirstOrDefaultAsync();
+                VM.TicketsSummary = await _context.TicketsSummaryView.FirstOrDefaultAsync() ?? new TicketsSummaryView(); ;
+                VM.TicketsPriority = await _context.TicketsPriorityView.FirstOrDefaultAsync() ?? new TicketsPriorityView(); ;
+                VM.TicketsSummary.TotalTickets ??= 0;
+                VM.TicketsSummary.AssignedTickets ??= 0;
+                VM.TicketsSummary.ClosedTickets ??= 0;
+                VM.TicketsSummary.PendingTickets ??= 0;
+                VM.TicketsSummary.ReOpenedTickets ??= 0;
+                VM.TicketsSummary.ResolvedTickets ??= 0;
+                VM.TicketsSummary.EscalatedTickets ??= 0;
+                
+                VM.TicketsPriority.TotalTickets ??= 0;
+                VM.TicketsPriority.UrgentTickets ??= 0;
+                VM.TicketsPriority.VeryUrgentTickets ??= 0;
+                VM.TicketsPriority.MediumTickets ??= 0; 
 
                 VM.Tickets = await _context.Tickets
                 .Include(t => t.CreatedBy)
